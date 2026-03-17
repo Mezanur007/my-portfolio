@@ -254,6 +254,52 @@ footer p{font-size:.52rem;letter-spacing:2px;color:var(--dim);}
 
 @media(max-width:1020px){.cap-grid{grid-template-columns:repeat(2,1fr);}.svc-grid{grid-template-columns:repeat(2,1fr);}.prod-grid{grid-template-columns:1fr;}.profile-grid{grid-template-columns:1fr;gap:48px;}.hero-layout{grid-template-columns:1fr;gap:40px;}.hero-photo-frame,.hero-photo{width:260px;}.hero-photo{height:340px;}}
 @media(max-width:720px){nav{padding:14px 20px;}.nav-links{display:none;}#hero,#profile,#capabilities,#experience,#products,#services,#contact{padding:80px 0;}.inner{padding:0 20px;}#hero{padding-top:100px;padding-left:20px;padding-right:20px;}footer{padding:20px;flex-direction:column;text-align:center;}.hero-metrics{flex-wrap:wrap;}.metric{min-width:40%;}.cap-grid{grid-template-columns:1fr;}.ms-meta{flex-direction:column;gap:4px;}h1.hero-name{letter-spacing:-2px;}.svc-grid{grid-template-columns:repeat(2,1fr);}}
+
+/* ── FONT SIZE OVERRIDES ── */
+.nav-badge{font-size:.68rem;}.nav-name{font-size:.88rem;}.nav-links a{font-size:.75rem;}.nav-status{font-size:.75rem;}.h-tag{font-size:.72rem;}.hero-desc{font-size:1.15rem;line-height:2;}.m-key{font-size:.68rem;}.sec-num{font-size:.7rem;}.hp-t{font-size:.72rem;}.hp-s{font-size:.68rem;}.sb-name{font-size:.78rem;}.sb-pct{font-size:.72rem;}.cap-n-tag{font-size:.63rem;}.cap-h{font-size:.92rem;}.cap-d{font-size:1rem;}.ms-date{font-size:.68rem;}.ms-org{font-size:.68rem;}.ms-loc{font-size:.72rem;}.ms-badge{font-size:.65rem;}.ms-body{font-size:1rem;line-height:1.95;}.ms-sk{font-size:.65rem;}.p-type{font-size:.65rem;}.p-chip{font-size:.65rem;}.svc-n{font-size:.78rem;}.c-sub{font-size:.72rem;}.c-link{font-size:.74rem;}.f-logo{font-size:.92rem;}.photo-label{font-size:.64rem;}.play-label{font-size:.78rem;}.play-sub{font-size:1rem;}.id-text p{font-size:1.08rem;}footer p{font-size:.68rem;}
+
+/* ── HOVER EFFECTS ── */
+/* Cards lift + glow */
+.cap-card{transition:background .25s,transform .3s,box-shadow .3s;}
+.cap-card:hover{transform:translateY(-5px);box-shadow:0 16px 48px rgba(255,107,53,.14);}
+.prod-card{transition:border-color .3s,transform .3s,box-shadow .3s;}
+.prod-card:hover{transform:translateY(-5px);box-shadow:0 20px 56px rgba(255,107,53,.16);}
+.svc-item{transition:background .2s,transform .25s;}
+.svc-item:hover{transform:translateY(-3px);}
+/* Section headings glow */
+h2.sec-title{transition:text-shadow .3s;}
+h2.sec-title:hover{text-shadow:0 0 32px rgba(255,107,53,.45),0 0 64px rgba(255,107,53,.15);}
+/* Experience: indent slide + title glow */
+.ms{transition:padding-left .3s;}
+.ms:hover{padding-left:10px;}
+.ms-title{transition:color .3s,text-shadow .3s;}
+.ms:hover .ms-title{color:var(--orange);text-shadow:0 0 18px rgba(255,107,53,.4);}
+/* Skill & chip tags neon pop */
+.ms-sk{transition:all .22s;}
+.ms-sk:hover{background:rgba(0,212,255,.15);border-color:var(--blue);box-shadow:0 0 14px rgba(0,212,255,.35);color:var(--white);}
+.p-chip{transition:all .22s;}
+.p-chip:hover{background:rgba(255,107,53,.18);box-shadow:0 0 14px rgba(255,107,53,.3);color:var(--white);}
+/* Metrics pulse glow */
+.metric{transition:background .25s;}
+.metric:hover{background:rgba(255,107,53,.03);}
+.m-val{transition:text-shadow .3s;}
+.metric:hover .m-val{text-shadow:0 0 24px rgba(255,107,53,.55),0 0 48px rgba(255,107,53,.2);}
+/* Service icon bounce */
+.svc-ico{transition:transform .3s;}
+.svc-item:hover .svc-ico{transform:scale(1.25) rotate(-6deg);}
+.svc-item:hover .svc-n{color:var(--orange);}
+/* Profile text brighten */
+.id-text p{transition:color .3s;}
+.id-text p:hover{color:#9ab8cc;}
+/* HUD card glow */
+.hud-card{transition:box-shadow .3s;}
+.hud-card:hover{box-shadow:0 0 48px rgba(255,107,53,.12);}
+/* Product headings */
+.prod-card h3{transition:color .25s,text-shadow .25s;}
+.prod-card:hover h3{color:var(--orange);text-shadow:0 0 20px rgba(255,107,53,.3);}
+/* Capability icon bounce */
+.cap-ico{transition:transform .3s;}
+.cap-card:hover .cap-ico{transform:scale(1.2) rotate(8deg);}
 </style>
 </head>
 <body>
