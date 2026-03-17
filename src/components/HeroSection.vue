@@ -41,7 +41,6 @@
           <div class="photo-scan-line"></div>
           <div class="photo-glow"></div>
         </div>
-        <div class="photo-label">// MEZANUR.MARUF.PNG</div>
       </div>
     </div>
   </section>

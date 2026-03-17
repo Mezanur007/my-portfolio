@@ -572,6 +572,86 @@ footer p { font-size: .64rem; letter-spacing: 2px; color: var(--text-muted); fon
 .mode-btn.active { box-shadow: var(--neu-in); color: var(--primary); }
 .mode-btn:hover { color: var(--text); }
 
+/* ── THEME TOGGLE BUTTON ── */
+.nav-right { display: flex; align-items: center; gap: 16px; }
+.theme-toggle {
+  width: 42px; height: 42px; border-radius: 50%;
+  background: var(--bg); box-shadow: var(--neu-sm);
+  border: none; cursor: none;
+  display: grid; place-items: center;
+  color: var(--text-dim);
+  transition: box-shadow .2s, color .2s, transform .15s;
+  flex-shrink: 0;
+}
+.theme-toggle:hover { box-shadow: var(--neu-in); color: var(--primary); transform: scale(.96); }
+.theme-toggle svg { width: 18px; height: 18px; }
+
+/* smooth theme transition */
+*, *::before, *::after { transition: background-color .25s ease, color .18s ease, border-color .2s ease; }
+/* but keep animation-based transitions working */
+.reveal, .sb-fill, .cell-mark, .cap-card::after, .play-btn, #cur, #cur-ring { transition: unset; }
+.reveal { transition: opacity .7s ease, transform .7s ease; }
+.sb-fill { transition: width 1.2s cubic-bezier(.4,0,.2,1); }
+.cell-mark { transition: transform .25s cubic-bezier(.34,1.56,.64,1); }
+.cap-card::after { transition: transform .4s; }
+.theme-toggle { transition: box-shadow .2s, color .2s, transform .15s; }
+.btn-A, .btn-B { transition: box-shadow .2s, transform .15s; }
+#cur { transition: width .15s, height .15s; }
+
+/* ════════════════════════════════════════
+   DARK MODE
+   Toggled by adding class "dark" to <html>
+   ════════════════════════════════════════ */
+html.dark {
+  --bg:          #22262e;
+  --bg2:         #1e2229;
+  --sd:          #1b1e25;
+  --sl:          #292e39;
+  --primary:     #5b86ff;
+  --primary-rgb: 91, 134, 255;
+  --orange:      #ff8c52;
+  --orange-rgb:  255, 140, 82;
+  --green:       #2ed573;
+  --text:        #dce6f5;
+  --text-dim:    #8fa8c8;
+  --text-muted:  #4e5f7a;
+}
+
+/* Nav shadow — dark */
+html.dark nav {
+  box-shadow: 0 4px 20px rgba(0,0,0,.45), 0 1px 0 rgba(255,255,255,.03);
+}
+
+/* Footer shadow — dark */
+html.dark footer {
+  box-shadow: 0 -4px 18px rgba(0,0,0,.35);
+}
+
+/* Game overlay backdrop — dark */
+html.dark #game-overlay {
+  background: rgba(15,17,22,.95);
+}
+
+/* Canvas — slightly more visible on dark */
+html.dark #bgCanvas { opacity: 0.55; }
+
+/* Hero grid lines — dark */
+html.dark .hero-grid {
+  background-image:
+    linear-gradient(rgba(91,134,255,.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(91,134,255,.04) 1px, transparent 1px);
+}
+
+/* Section heading border */
+html.dark .hp-head { border-bottom-color: rgba(91,134,255,.12); }
+
+/* Skill bar fill dot */
+html.dark .sb-fill::after { background: var(--bg); }
+
+/* Experience left accent */
+html.dark .ms { border-left-color: rgba(91,134,255,.2); }
+html.dark .ms.active, html.dark .ms:hover { border-left-color: var(--primary); }
+
 /* ── RESPONSIVE ── */
 @media(max-width:1020px) {
   .cap-grid { grid-template-columns: repeat(2,1fr); }
