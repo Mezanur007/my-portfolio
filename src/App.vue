@@ -68,11 +68,11 @@ onMounted(() => {
       if (p.x < -5) p.x = W + 5; if (p.x > W + 5) p.x = -5
       if (p.y < -5) p.y = H + 5; if (p.y > H + 5) p.y = -5
       ctx2.beginPath(); ctx2.arc(p.x, p.y, p.r, 0, Math.PI * 2)
-      ctx2.fillStyle = `rgba(255,107,53,${p.a * .3})`; ctx2.fill()
+      ctx2.fillStyle = `rgba(45,76,200,${p.a * .12})`; ctx2.fill()
     })
     for (let i = 0; i < pts.length; i++) for (let j = i + 1; j < pts.length; j++) {
       const dx = pts[i].x - pts[j].x, dy = pts[i].y - pts[j].y, d = Math.sqrt(dx * dx + dy * dy)
-      if (d < 130) { ctx2.beginPath(); ctx2.moveTo(pts[i].x, pts[i].y); ctx2.lineTo(pts[j].x, pts[j].y); ctx2.strokeStyle = `rgba(0,212,255,${(1 - d / 130) * .06})`; ctx2.lineWidth = .5; ctx2.stroke() }
+      if (d < 130) { ctx2.beginPath(); ctx2.moveTo(pts[i].x, pts[i].y); ctx2.lineTo(pts[j].x, pts[j].y); ctx2.strokeStyle = `rgba(45,76,200,${(1 - d / 130) * .04})`; ctx2.lineWidth = .5; ctx2.stroke() }
     }
     requestAnimationFrame(frame)
   })()
