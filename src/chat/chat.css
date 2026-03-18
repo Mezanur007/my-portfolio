@@ -20,7 +20,18 @@
   transform: scale(1.08);
   box-shadow: 8px 8px 18px rgba(0,0,0,.55), -4px -4px 12px rgba(45,76,200,.22);
 }
-.chat-fab svg { color: #fff; width: 26px; height: 26px; }
+.chat-fab-emoji {
+  font-size: 28px;
+  line-height: 1;
+  animation: fabWiggle 2s ease-in-out infinite;
+  display: block;
+}
+@keyframes fabWiggle {
+  0%, 100% { transform: rotate(-10deg) scale(1); }
+  25%       { transform: rotate(14deg) scale(1.15); }
+  50%       { transform: rotate(-8deg) scale(1); }
+  75%       { transform: rotate(10deg) scale(1.1); }
+}
 
 .chat-unread {
   position: absolute;
