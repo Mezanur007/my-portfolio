@@ -15,6 +15,7 @@
     <ServicesSection />
     <ContactSection />
     <AppFooter />
+    <ChatWidget />
   </div>
 </template>
 
@@ -31,6 +32,7 @@ import ServicesSection from './components/ServicesSection.vue'
 import ContactSection from './components/ContactSection.vue'
 import AppFooter from './components/AppFooter.vue'
 import GameModal from './components/GameModal.vue'
+import ChatWidget from './chat/ChatWidget.vue'
 
 const gameModal = ref(null)
 
@@ -48,7 +50,7 @@ onMounted(() => {
     ring.style.left = rx + 'px'; ring.style.top = ry + 'px'
     requestAnimationFrame(loop)
   })()
-  document.querySelectorAll('a,button,.cell,.play-btn,.mode-btn,.g-btn,.gm-close').forEach(el => {
+  document.querySelectorAll('a,button,.cell,.play-btn,.mode-btn,.g-btn,.gm-close,.chat-fab,.chat-send').forEach(el => {
     el.addEventListener('mouseenter', () => { cur.style.width = '18px'; cur.style.height = '18px'; ring.style.width = '48px'; ring.style.height = '48px' })
     el.addEventListener('mouseleave', () => { cur.style.width = '8px'; cur.style.height = '8px'; ring.style.width = '32px'; ring.style.height = '32px' })
   })
