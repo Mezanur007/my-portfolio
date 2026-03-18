@@ -16,6 +16,7 @@
     <ContactSection />
     <AppFooter />
     <ChatWidget />
+    <UFOWidget />
   </div>
 </template>
 
@@ -33,6 +34,7 @@ import ContactSection from './components/ContactSection.vue'
 import AppFooter from './components/AppFooter.vue'
 import GameModal from './components/GameModal.vue'
 import ChatWidget from './chat/ChatWidget.vue'
+import UFOWidget from './components/UFOWidget.vue'
 
 const gameModal = ref(null)
 
