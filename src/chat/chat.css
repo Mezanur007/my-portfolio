@@ -152,6 +152,7 @@
 }
 .chat-msg.visitor { align-self: flex-end; align-items: flex-end; }
 .chat-msg.admin   { align-self: flex-start; align-items: flex-start; }
+.chat-msg.bot     { align-self: flex-start; align-items: flex-start; }
 
 .chat-bubble {
   padding: 9px 13px; border-radius: 14px;
@@ -166,6 +167,17 @@
   background: rgba(255,255,255,.08);
   color: rgba(255,255,255,.9);
   border-bottom-left-radius: 4px;
+}
+.chat-msg.bot .chat-bubble {
+  background: rgba(30,30,50,.75);
+  color: rgba(255,255,255,.8);
+  border: 1px solid rgba(45,76,200,.25);
+  border-bottom-left-radius: 4px;
+}
+.chat-bot-label {
+  font-size: 10px; color: rgba(255,255,255,.35);
+  font-family: 'Nunito Sans', sans-serif;
+  margin-top: 2px; padding: 0 3px;
 }
 .chat-time {
   font-size: 10px; color: rgba(255,255,255,.35);

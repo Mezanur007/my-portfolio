@@ -50,9 +50,10 @@
             v-for="msg in messages"
             :key="msg.id"
             class="chat-msg"
-            :class="msg.sender"
+            :class="msg.sender === 'bot' ? 'bot' : msg.sender"
           >
             <div class="chat-bubble">{{ msg.text }}</div>
+            <span v-if="msg.sender === 'bot'" class="chat-bot-label">🤖 Bot</span>
             <span class="chat-time">{{ formatTime(msg.sentAt) }}</span>
           </div>
           <!-- Typing indicator -->

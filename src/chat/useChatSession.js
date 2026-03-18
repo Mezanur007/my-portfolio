@@ -64,6 +64,36 @@ export function useChatSession() {
       unreadByAdmin: messages.value.filter(m => m.sender === 'visitor' && !m.read).length + 1,
       visitorTyping: false,
     })
+    autoReply(text.trim())
+  }
+
+  function autoReply(text) {
+    const lower = text.toLowerCase()
+    let reply = null
+
+    if (/contact|number|mobile|whatsapp|phone/.test(lower)) {
+      reply = 'You can reach Maruf directly at 📞 +966510609881 (also on WhatsApp).'
+    } else if (/website|company|b-it|firm/.test(lower)) {
+      reply = 'Sure! You can visit the company website here 👉 https://b-it.co'
+    } else if (/available|availability|online|when|busy/.test(lower)) {
+      reply = "Maruf isn't available right now but will be back soon! If it's urgent, feel free to call or WhatsApp 📲 +966510609881"
+    } else if (/hi|hello|hey|morning|evening|afternoon|greetings|salam|howdy|sup/.test(lower)) {
+      reply = "Hey there! 👋 Maruf will connect with you soon. If it's an emergency, reach out at 📞 +966510609881 (WhatsApp too)."
+    }
+
+    if (!reply) return
+
+    setTimeout(async () => {
+      const lastMsg = messages.value[messages.value.length - 1]
+      if (lastMsg && lastMsg.sender !== 'visitor') return
+      const messagesRef = collection(db, 'conversations', sessionId.value, 'messages')
+      await addDoc(messagesRef, {
+        text: reply,
+        sender: 'bot',
+        sentAt: serverTimestamp(),
+        read: true,
+      })
+    }, 1500)
   }
 
   function onTyping() {
