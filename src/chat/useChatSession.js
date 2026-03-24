@@ -4,7 +4,10 @@ import {
   serverTimestamp, updateDoc, query, orderBy, setDoc
 } from 'firebase/firestore'
 import { db } from '../firebase.js'
-import { intents, followUpSets, leadCaptureSteps, leadTriggerPatterns } from './botKnowledge.js'
+import {
+  intents, flows, leadCaptureSteps, leadTriggerPatterns,
+  finalConversionBlock, proTipMessage
+} from './botKnowledge.js'
 
 export function useChatSession() {
   const sessionId = ref(null)
@@ -15,7 +18,18 @@ export function useChatSession() {
   const isOpen = ref(false)
   const unsubMessages = ref(null)
   const unsubSession = ref(null)
-  const botState = ref({ flow: 'idle', step: 0, data: {} })
+  const botState = ref({
+    flow: 'idle',
+    step: 0,
+    data: {
+      service: null,
+      projectType: null,
+      readiness: 'low',
+      interactions: 0,
+      pricingAskedCount: 0,
+      proTipShown: false,
+    },
+  })
   let typingTimer = null
 
   function initSession(name) {
@@ -67,7 +81,25 @@ export function useChatSession() {
       unreadByAdmin: messages.value.filter(m => m.sender === 'visitor' && !m.read).length + 1,
       visitorTyping: false,
     })
+
+    // Update readiness based on quick-reply selections
+    updateReadiness(text.trim())
+
     autoReply(text.trim())
+  }
+
+  function updateReadiness(text) {
+    const lower = text.toLowerCase()
+    const high = ['book a meeting', 'share my idea', 'share details first', 'yes, book a meeting', 'yes, book meeting']
+    const medium = ['pricing', 'timeline', 'get pricing', 'get timeline', 'i need pricing', 'i want timeline']
+
+    if (high.some(h => lower.includes(h))) {
+      botState.value.data.readiness = 'high'
+    } else if (medium.some(m => lower.includes(m))) {
+      if (botState.value.data.readiness === 'low') botState.value.data.readiness = 'medium'
+    } else if (botState.value.data.readiness === 'low') {
+      botState.value.data.readiness = 'medium'
+    }
   }
 
   function classifyIntent(text) {
@@ -112,6 +144,50 @@ export function useChatSession() {
     botTyping.value = false
   }
 
+  function getFlowSteps(flowName) {
+    if (flowName === 'lead_capture') return leadCaptureSteps
+    return flows[flowName] || []
+  }
+
+  async function transitionFlow(flowName) {
+    if (flowName === 'book_meeting') {
+      await sendBotMessage(
+        'Great! You can book a meeting at your convenience. WhatsApp: +966510609881 — or share your contact below and Maruf will reach out.',
+        ['Share contact', 'WhatsApp now']
+      )
+      botState.value = { ...botState.value, flow: 'idle' }
+      return
+    }
+    if (flowName === 'talk_human') {
+      await sendBotMessage(
+        'Understood! Maruf will connect with you shortly. You can also reach him directly via WhatsApp 📲 +966510609881.',
+        []
+      )
+      botState.value = { ...botState.value, flow: 'idle' }
+      return
+    }
+    if (flowName === 'lead_capture') {
+      botState.value = { ...botState.value, flow: 'lead_capture', step: 0 }
+      const first = leadCaptureSteps[0]
+      await sendBotMessage(first.question, first.quickReplies || [])
+      return
+    }
+    const steps = getFlowSteps(flowName)
+    if (!steps || !steps.length) return
+    botState.value = { ...botState.value, flow: flowName, step: 0 }
+    await sendBotMessage(steps[0].question, steps[0].quickReplies || [])
+  }
+
+  async function maybeShowProTip() {
+    const d = botState.value.data
+    if (d.interactions >= 2 && !d.proTipShown && d.readiness !== 'low') {
+      botState.value.data.proTipShown = true
+      setTimeout(async () => {
+        await sendBotMessage(proTipMessage.text, proTipMessage.quickReplies)
+      }, 2000)
+    }
+  }
+
   function autoReply(text) {
     botTyping.value = true
     setTimeout(async () => {
@@ -120,22 +196,30 @@ export function useChatSession() {
         return
       }
 
-      // Continue lead capture flow
-      if (botState.value.flow === 'lead_capture') {
-        const currentStep = leadCaptureSteps[botState.value.step]
-        botState.value.data[currentStep.field] = text
-        const nextStep = botState.value.step + 1
+      botState.value.data.interactions++
 
-        if (nextStep < leadCaptureSteps.length) {
-          botState.value = { ...botState.value, step: nextStep }
-          const next = leadCaptureSteps[nextStep]
-          await sendBotMessage(next.question, next.quickReplies)
+      const currentFlow = botState.value.flow
+
+      // ── LEAD CAPTURE FLOW ──────────────────────────────────────────────────
+      if (currentFlow === 'lead_capture') {
+        const stepIndex = botState.value.step
+        const currentStep = leadCaptureSteps[stepIndex]
+        botState.value.data[currentStep.field] = text
+        const nextIndex = stepIndex + 1
+
+        if (nextIndex < leadCaptureSteps.length) {
+          botState.value = { ...botState.value, step: nextIndex }
+          const next = leadCaptureSteps[nextIndex]
+          await sendBotMessage(next.question, next.quickReplies || [])
         } else {
-          // Lead capture complete
           const leadData = { ...botState.value.data }
-          botState.value = { flow: 'idle', step: 0, data: {} }
+          botState.value = {
+            flow: 'idle', step: 0,
+            data: { ...botState.value.data, service: null, projectType: null },
+          }
           await sendBotMessage(
-            "Thank you! 🎉 I've captured all your project details. Maruf will review them and reach out to you very soon. If you'd like to speak directly, WhatsApp +966510609881 is always open."
+            "Thank you! 🎉 Maruf will review your details and reach out very soon. You can also WhatsApp him directly at +966510609881.",
+            ['Book a meeting', 'Talk to human now']
           )
           if (sessionId.value) {
             await updateDoc(doc(db, 'conversations', sessionId.value), {
@@ -144,41 +228,99 @@ export function useChatSession() {
             })
           }
         }
+        await maybeShowProTip()
         return
       }
 
-      // Start lead capture if trigger detected
-      if (isLeadIntent(text) && botState.value.flow === 'idle') {
-        botState.value = { flow: 'lead_capture', step: 0, data: {} }
-        const first = leadCaptureSteps[0]
-        await sendBotMessage(
-          "Great! Let me help you plan your project. I'll ask a few quick questions. 📋\n\n" + first.question,
-          first.quickReplies
-        )
+      // ── OTHER NAMED FLOWS ─────────────────────────────────────────────────
+      if (currentFlow !== 'idle') {
+        const steps = getFlowSteps(currentFlow)
+        const stepIndex = botState.value.step
+        const currentStep = steps[stepIndex]
+
+        // Special rule: pricing "Advanced" → immediate meeting offer
+        if (currentFlow === 'pricing' && text === 'Advanced') {
+          botState.value = { ...botState.value, flow: 'idle' }
+          await sendBotMessage(
+            'Advanced projects need a tailored approach. I recommend booking a direct meeting with Maruf for a proper scoping session.',
+            ['Book a meeting', 'Share my idea', 'Talk to human now']
+          )
+          await maybeShowProTip()
+          return
+        }
+
+        // Check routes
+        if (currentStep?.routes && currentStep.routes[text]) {
+          await transitionFlow(currentStep.routes[text])
+          await maybeShowProTip()
+          return
+        }
+
+        // Advance linearly
+        const nextIndex = stepIndex + 1
+        if (nextIndex < steps.length) {
+          botState.value = { ...botState.value, step: nextIndex }
+          const next = steps[nextIndex]
+          await sendBotMessage(next.question, next.quickReplies || [])
+        } else {
+          // End of flow — show conversion block
+          botState.value = { ...botState.value, flow: 'idle' }
+          await sendBotMessage(finalConversionBlock.text, finalConversionBlock.quickReplies)
+        }
+        await maybeShowProTip()
         return
       }
 
-      // Classify intent
+      // ── IDLE: CLASSIFY INTENT ─────────────────────────────────────────────
       const intent = classifyIntent(text)
       if (intent) {
-        await sendBotMessage(intent.answer, intent.quickReplies)
+        // Track pricing asks
+        if (intent.id === 'pricing') {
+          botState.value.data.pricingAskedCount++
+          if (botState.value.data.pricingAskedCount >= 2) {
+            await sendBotMessage(
+              'I notice you are really focused on pricing — the best way to get accurate numbers is a quick meeting with Maruf.',
+              ['Book a meeting', 'Share my idea', 'Talk to human now']
+            )
+            await maybeShowProTip()
+            return
+          }
+        }
+
+        // Send answer if present
+        if (intent.answer) {
+          await sendBotMessage(intent.answer, intent.quickReplies || [])
+        }
+
+        // Route to flow
+        if (intent.flow) {
+          if (intent.flow === 'book_meeting' || intent.flow === 'talk_human') {
+            await transitionFlow(intent.flow)
+          } else if (intent.flow === 'pricing' || intent.flow === 'timeline' || intent.flow === 'portfolio') {
+            // Jump straight into these flows (no global_followup)
+            await transitionFlow(intent.flow)
+          } else {
+            // Service intents → global_followup first
+            botState.value = { ...botState.value, flow: 'global_followup', step: 0 }
+            const gf = flows.global_followup[0]
+            await sendBotMessage(gf.question, gf.quickReplies)
+          }
+        }
+
+        await maybeShowProTip()
         return
       }
 
-      // Single word — ask for clarification
-      if (!text.includes(' ')) {
-        await sendBotMessage(
-          followUpSets.general.question,
-          followUpSets.general.options
-        )
+      // Lead trigger detected
+      if (isLeadIntent(text)) {
+        await transitionFlow('lead_capture')
+        await maybeShowProTip()
         return
       }
 
-      // No intent matched — send fallback
-      await sendBotMessage(
-        "I may need a little more detail to help properly. Please choose one of the options below.",
-        followUpSets.general.options
-      )
+      // Single word or no intent → confused flow
+      await transitionFlow('confused')
+      await maybeShowProTip()
     }, 10000)
   }
 
