@@ -46,23 +46,31 @@
       <!-- Messages -->
       <template v-else>
         <div class="chat-messages" ref="messagesEl">
-          <div
-            v-for="msg in messages"
-            :key="msg.id"
-            class="chat-msg"
-            :class="msg.sender === 'bot' ? 'bot' : msg.sender"
-          >
-            <div class="chat-bubble">{{ msg.text }}</div>
-            <span v-if="msg.sender === 'bot'" class="chat-bot-label">🤖 Bot</span>
-            <span class="chat-time">{{ formatTime(msg.sentAt) }}</span>
-          </div>
-          <!-- Typing indicator -->
-          <div v-if="adminTyping" class="chat-msg admin">
-            <div class="chat-bubble" style="padding:6px 10px">
-              <div class="typing-indicator">
-                <span></span><span></span><span></span>
-              </div>
+          <template v-for="msg in messages" :key="msg.id">
+            <div
+              class="chat-msg"
+              :class="msg.sender === 'bot' ? 'bot' : msg.sender"
+            >
+              <div class="chat-bubble">{{ msg.text }}</div>
+              <span v-if="msg.sender === 'bot'" class="chat-bot-label">🤖 Bot</span>
+              <span class="chat-time">{{ formatTime(msg.sentAt) }}</span>
             </div>
+            <div v-if="msg.sender === 'bot' && msg.quickReplies?.length" class="quick-replies">
+              <button
+                v-for="opt in msg.quickReplies"
+                :key="opt"
+                class="quick-reply-btn"
+                @click="sendQuickReply(opt)"
+              >{{ opt }}</button>
+            </div>
+          </template>
+
+          <!-- Typing indicator -->
+          <div v-if="adminTyping || botTyping" class="chat-msg admin">
+            <div class="chat-bubble" style="padding:6px 10px">
+              <div class="typing-indicator"><span></span><span></span><span></span></div>
+            </div>
+            <span class="chat-bot-label">{{ botTyping ? '🤖 Bot' : '💬 Maruf' }}</span>
           </div>
         </div>
 
@@ -93,7 +101,7 @@ import { ref, watch, nextTick, computed } from 'vue'
 import { useChatSession } from './useChatSession.js'
 import './chat.css'
 
-const { sessionId, messages, adminTyping, isOpen, initSession, sendMessage: doSend, onTyping } = useChatSession()
+const { sessionId, messages, adminTyping, botTyping, isOpen, initSession, sendMessage: doSend, onTyping } = useChatSession()
 
 const nameInput = ref('')
 const inputText = ref('')
@@ -121,13 +129,18 @@ async function sendMessage() {
   await doSend(text)
 }
 
+async function sendQuickReply(label) {
+  inputText.value = ''
+  await doSend(label)
+}
+
 function formatTime(ts) {
   if (!ts) return ''
   const d = ts.toDate ? ts.toDate() : new Date(ts)
   return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
 }
 
-watch(messages, async () => {
+watch([messages, adminTyping, botTyping], async () => {
   await nextTick()
   if (messagesEl.value) {
     messagesEl.value.scrollTop = messagesEl.value.scrollHeight

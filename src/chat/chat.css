@@ -228,6 +228,32 @@
 .chat-send:disabled { opacity: .3; cursor: not-allowed; }
 .chat-send svg { width: 16px; height: 16px; }
 
+/* ── Quick reply buttons ── */
+.quick-replies {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+  max-width: 100%;
+}
+.quick-reply-btn {
+  background: rgba(45,76,200,.12);
+  border: 1px solid rgba(45,76,200,.4);
+  border-radius: 20px;
+  padding: 5px 12px;
+  color: rgba(255,255,255,.8);
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 11px;
+  cursor: pointer;
+  transition: background .15s, border-color .15s;
+  white-space: nowrap;
+}
+.quick-reply-btn:hover {
+  background: rgba(45,76,200,.3);
+  border-color: rgba(45,76,200,.7);
+  color: #fff;
+}
+
 @media (max-width: 400px) {
   .chat-panel { width: calc(100vw - 16px); right: 8px; bottom: 88px; }
   .chat-fab { right: 16px; bottom: 16px; }

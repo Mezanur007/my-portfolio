@@ -4,15 +4,18 @@ import {
   serverTimestamp, updateDoc, query, orderBy, setDoc
 } from 'firebase/firestore'
 import { db } from '../firebase.js'
+import { intents, followUpSets, leadCaptureSteps, leadTriggerPatterns } from './botKnowledge.js'
 
 export function useChatSession() {
   const sessionId = ref(null)
   const messages = ref([])
   const adminTyping = ref(false)
+  const botTyping = ref(false)
   const visitorName = ref('')
   const isOpen = ref(false)
   const unsubMessages = ref(null)
   const unsubSession = ref(null)
+  const botState = ref({ flow: 'idle', step: 0, data: {} })
   let typingTimer = null
 
   function initSession(name) {
@@ -67,33 +70,116 @@ export function useChatSession() {
     autoReply(text.trim())
   }
 
-  function autoReply(text) {
+  function classifyIntent(text) {
     const lower = text.toLowerCase()
-    let reply = null
-
-    if (/contact|number|mobile|whatsapp|phone/.test(lower)) {
-      reply = 'You can reach Maruf directly at 📞 +966510609881 (also on WhatsApp).'
-    } else if (/website|company|b-it|firm/.test(lower)) {
-      reply = 'Sure! You can visit the company website here 👉 https://b-it.co'
-    } else if (/available|availability|online|when|busy/.test(lower)) {
-      reply = "Maruf isn't available right now but will be back soon! If it's urgent, feel free to call or WhatsApp 📲 +966510609881"
-    } else if (/hi|hello|hey|morning|evening|afternoon|greetings|salam|howdy|sup/.test(lower)) {
-      reply = "Hey there! 👋 Maruf will connect with you soon. If it's an emergency, reach out at 📞 +966510609881 (WhatsApp too)."
+    for (const intent of intents) {
+      if (intent.patterns.some(p => lower.includes(p))) return intent
     }
+    return null
+  }
 
-    if (!reply) return
+  function isLeadIntent(text) {
+    const lower = text.toLowerCase()
+    return leadTriggerPatterns.some(p => lower.includes(p))
+  }
 
+  function shouldBotReply() {
+    if (adminTyping.value) return false
+    const msgs = messages.value
+    for (let i = msgs.length - 1; i >= 0; i--) {
+      if (msgs[i].sender === 'admin') {
+        const ts = msgs[i].sentAt?.toDate?.() || new Date(msgs[i].sentAt)
+        if (Date.now() - ts.getTime() < 5 * 60 * 1000) return false
+        break
+      }
+    }
+    return true
+  }
+
+  async function sendBotMessage(text, quickReplies) {
+    if (!sessionId.value) return
+    const messagesRef = collection(db, 'conversations', sessionId.value, 'messages')
+    const payload = {
+      text,
+      sender: 'bot',
+      sentAt: serverTimestamp(),
+      read: true,
+    }
+    if (quickReplies && quickReplies.length) {
+      payload.quickReplies = quickReplies
+    }
+    await addDoc(messagesRef, payload)
+    botTyping.value = false
+  }
+
+  function autoReply(text) {
+    botTyping.value = true
     setTimeout(async () => {
-      const lastMsg = messages.value[messages.value.length - 1]
-      if (lastMsg && lastMsg.sender !== 'visitor') return
-      const messagesRef = collection(db, 'conversations', sessionId.value, 'messages')
-      await addDoc(messagesRef, {
-        text: reply,
-        sender: 'bot',
-        sentAt: serverTimestamp(),
-        read: true,
-      })
-    }, 1500)
+      if (!shouldBotReply()) {
+        botTyping.value = false
+        return
+      }
+
+      // Continue lead capture flow
+      if (botState.value.flow === 'lead_capture') {
+        const currentStep = leadCaptureSteps[botState.value.step]
+        botState.value.data[currentStep.field] = text
+        const nextStep = botState.value.step + 1
+
+        if (nextStep < leadCaptureSteps.length) {
+          botState.value = { ...botState.value, step: nextStep }
+          const next = leadCaptureSteps[nextStep]
+          await sendBotMessage(next.question, next.quickReplies)
+        } else {
+          // Lead capture complete
+          const leadData = { ...botState.value.data }
+          botState.value = { flow: 'idle', step: 0, data: {} }
+          await sendBotMessage(
+            "Thank you! 🎉 I've captured all your project details. Maruf will review them and reach out to you very soon. If you'd like to speak directly, WhatsApp +966510609881 is always open."
+          )
+          if (sessionId.value) {
+            await updateDoc(doc(db, 'conversations', sessionId.value), {
+              leadData,
+              isLead: true,
+            })
+          }
+        }
+        return
+      }
+
+      // Start lead capture if trigger detected
+      if (isLeadIntent(text) && botState.value.flow === 'idle') {
+        botState.value = { flow: 'lead_capture', step: 0, data: {} }
+        const first = leadCaptureSteps[0]
+        await sendBotMessage(
+          "Great! Let me help you plan your project. I'll ask a few quick questions. 📋\n\n" + first.question,
+          first.quickReplies
+        )
+        return
+      }
+
+      // Classify intent
+      const intent = classifyIntent(text)
+      if (intent) {
+        await sendBotMessage(intent.answer, intent.quickReplies)
+        return
+      }
+
+      // Single word — ask for clarification
+      if (!text.includes(' ')) {
+        await sendBotMessage(
+          followUpSets.general.question,
+          followUpSets.general.options
+        )
+        return
+      }
+
+      // No intent matched — send fallback
+      await sendBotMessage(
+        "I may need a little more detail to help properly. Please choose one of the options below.",
+        followUpSets.general.options
+      )
+    }, 10000)
   }
 
   function onTyping() {
@@ -117,6 +203,7 @@ export function useChatSession() {
     sessionId,
     messages,
     adminTyping,
+    botTyping,
     visitorName,
     isOpen,
     initSession,
