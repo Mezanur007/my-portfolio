@@ -39,6 +39,12 @@
             <template v-else-if="msg.type === 'document'">
               <a :href="msg.fileUrl" target="_blank" rel="noopener noreferrer">📄 {{ msg.fileName }}</a>
             </template>
+            <template v-else-if="msg.type === 'booking_request'">
+              <div class="booking-request-badge">
+                📅 <strong>Meeting Request</strong><br>
+                {{ msg.bookingDate }} at {{ msg.bookingTime }}
+              </div>
+            </template>
             <template v-else>{{ msg.text }}</template>
           </div>
           <span class="msg-time">{{ formatTime(msg.sentAt) }}</span>

@@ -63,6 +63,24 @@
                 @click="sendQuickReply(opt)"
               >{{ opt }}</button>
             </div>
+            <div
+              v-if="msg.type === 'date_picker' && !submittedPickers.has(msg.id)"
+              class="date-picker-card"
+            >
+              <div class="dp-row">
+                <label>Date</label>
+                <input type="date" v-model="pickerDate" :min="todayStr" class="dp-input" />
+              </div>
+              <div class="dp-row">
+                <label>Time</label>
+                <input type="time" v-model="pickerTime" class="dp-input" />
+              </div>
+              <button
+                class="dp-confirm-btn"
+                :disabled="!pickerDate || !pickerTime"
+                @click="confirmBooking(msg.id)"
+              >Confirm Meeting</button>
+            </div>
           </template>
 
           <!-- Typing indicator -->
@@ -101,7 +119,12 @@ import { ref, watch, nextTick, computed } from 'vue'
 import { useChatSession } from './useChatSession.js'
 import './chat.css'
 
-const { sessionId, messages, adminTyping, botTyping, isOpen, initSession, sendMessage: doSend, onTyping } = useChatSession()
+const { sessionId, messages, adminTyping, botTyping, isOpen, initSession, sendMessage: doSend, submitBooking, onTyping } = useChatSession()
+
+const submittedPickers = ref(new Set())
+const pickerDate = ref('')
+const pickerTime = ref('')
+const todayStr = computed(() => new Date().toISOString().slice(0, 10))
 
 const nameInput = ref('')
 const inputText = ref('')
@@ -132,6 +155,15 @@ async function sendMessage() {
 async function sendQuickReply(label) {
   inputText.value = ''
   await doSend(label)
+}
+
+async function confirmBooking(msgId) {
+  if (!pickerDate.value || !pickerTime.value) return
+  submittedPickers.value.add(msgId)
+  submittedPickers.value = new Set(submittedPickers.value)
+  await submitBooking(pickerDate.value, pickerTime.value)
+  pickerDate.value = ''
+  pickerTime.value = ''
 }
 
 function formatTime(ts) {

@@ -149,12 +149,46 @@ export function useChatSession() {
     return flows[flowName] || []
   }
 
+  async function submitBooking(date, time) {
+    if (!sessionId.value || !date || !time) return
+    const messagesRef = collection(db, 'conversations', sessionId.value, 'messages')
+    await addDoc(messagesRef, {
+      text: `Meeting request: ${date} at ${time}`,
+      type: 'booking_request',
+      bookingDate: date,
+      bookingTime: time,
+      sender: 'visitor',
+      sentAt: serverTimestamp(),
+      read: false,
+    })
+    await updateDoc(doc(db, 'conversations', sessionId.value), {
+      bookingRequest: { date, time, requestedAt: serverTimestamp() },
+      lastMessage: `Meeting request: ${date} at ${time}`,
+      lastMessageAt: serverTimestamp(),
+      unreadByAdmin: messages.value.filter(m => m.sender === 'visitor' && !m.read).length + 1,
+    })
+    await sendBotMessage(
+      `Your meeting is requested for ${formatDateDisplay(date)} at ${time}. Maruf will confirm very soon! 📅`,
+      ['Talk to human now', 'Share more details']
+    )
+  }
+
+  function formatDateDisplay(dateStr) {
+    return new Date(dateStr + 'T00:00:00').toLocaleDateString('en-US', {
+      weekday: 'long', year: 'numeric', month: 'short', day: 'numeric'
+    })
+  }
+
   async function transitionFlow(flowName) {
     if (flowName === 'book_meeting') {
-      await sendBotMessage(
-        'Great! You can book a meeting at your convenience. WhatsApp: +966510609881 — or share your contact below and Maruf will reach out.',
-        ['Share contact', 'WhatsApp now']
-      )
+      const messagesRef = collection(db, 'conversations', sessionId.value, 'messages')
+      await addDoc(messagesRef, {
+        type: 'date_picker',
+        text: 'Please select a date and time for your meeting.',
+        sender: 'bot',
+        sentAt: serverTimestamp(),
+        read: true,
+      })
       botState.value = { ...botState.value, flow: 'idle' }
       return
     }
@@ -350,6 +384,7 @@ export function useChatSession() {
     isOpen,
     initSession,
     sendMessage,
+    submitBooking,
     onTyping,
     closeSession,
   }
