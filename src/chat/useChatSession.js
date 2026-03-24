@@ -358,6 +358,18 @@ export function useChatSession() {
     }, 10000)
   }
 
+  function greetVisitor() {
+    botTyping.value = true
+    setTimeout(async () => {
+      botTyping.value = false
+      botState.value.data.interactions++
+      await sendBotMessage(
+        `Hello ${visitorName.value}! 👋 Welcome! I'm Maruf's assistant. How can I help you today?`,
+        ['Services', 'Pricing', 'Timeline', 'Portfolio', 'Book a Meeting']
+      )
+    }, 1000)
+  }
+
   function onTyping() {
     if (!sessionId.value) return
     const sessionRef = doc(db, 'conversations', sessionId.value)
@@ -386,6 +398,7 @@ export function useChatSession() {
     sendMessage,
     submitBooking,
     onTyping,
+    greetVisitor,
     closeSession,
   }
 }

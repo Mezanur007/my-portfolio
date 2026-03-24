@@ -119,7 +119,7 @@ import { ref, watch, nextTick, computed } from 'vue'
 import { useChatSession } from './useChatSession.js'
 import './chat.css'
 
-const { sessionId, messages, adminTyping, botTyping, isOpen, initSession, sendMessage: doSend, submitBooking, onTyping } = useChatSession()
+const { sessionId, messages, adminTyping, botTyping, isOpen, initSession, sendMessage: doSend, submitBooking, onTyping, greetVisitor } = useChatSession()
 
 const submittedPickers = ref(new Set())
 const pickerDate = ref('')
@@ -143,6 +143,7 @@ function startChat() {
   if (!nameInput.value.trim()) return
   initSession(nameInput.value.trim())
   sessionStarted.value = true
+  greetVisitor()
 }
 
 async function sendMessage() {
