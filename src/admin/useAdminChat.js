@@ -4,9 +4,10 @@ import {
 } from 'firebase/auth'
 import {
   collection, onSnapshot, query, orderBy,
-  addDoc, serverTimestamp, updateDoc, doc
+  addDoc, serverTimestamp, updateDoc, doc, deleteDoc
 } from 'firebase/firestore'
-import { db, auth } from '../firebase.js'
+import { ref as storageRef, uploadBytesResumable, getDownloadURL } from 'firebase/storage'
+import { db, auth, storage } from '../firebase.js'
 
 export function useAdminChat() {
   const user = ref(null)
@@ -89,6 +90,41 @@ export function useAdminChat() {
     })
   }
 
+  async function deleteMessage(messageId) {
+    if (!activeSessionId.value) return
+    const msgRef = doc(db, 'conversations', activeSessionId.value, 'messages', messageId)
+    await deleteDoc(msgRef)
+  }
+
+  async function sendFile(file) {
+    if (!activeSessionId.value || !file) return
+    const path = `chat/${activeSessionId.value}/${Date.now()}_${file.name}`
+    const fileRef = storageRef(storage, path)
+    const uploadTask = uploadBytesResumable(fileRef, file)
+    await new Promise((resolve, reject) => {
+      uploadTask.on('state_changed', null, reject, resolve)
+    })
+    const fileUrl = await getDownloadURL(fileRef)
+    let type = 'document'
+    if (file.type.startsWith('image/')) type = 'image'
+    else if (file.type.startsWith('video/')) type = 'video'
+    const messagesRef = collection(db, 'conversations', activeSessionId.value, 'messages')
+    await addDoc(messagesRef, {
+      type,
+      fileUrl,
+      fileName: file.name,
+      sender: 'admin',
+      sentAt: serverTimestamp(),
+      read: false,
+    })
+    const lastMessage = type === 'image' ? '[Image]' : type === 'video' ? '[Video]' : `[Document: ${file.name}]`
+    const sessionRef = doc(db, 'conversations', activeSessionId.value)
+    await updateDoc(sessionRef, {
+      lastMessage,
+      lastMessageAt: serverTimestamp(),
+    })
+  }
+
   let adminTypingTimer = null
   function onAdminTyping() {
     if (!activeSessionId.value) return
@@ -119,5 +155,7 @@ export function useAdminChat() {
     selectConversation,
     sendReply,
     onAdminTyping,
+    deleteMessage,
+    sendFile,
   }
 }

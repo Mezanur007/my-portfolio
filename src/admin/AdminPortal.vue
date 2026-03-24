@@ -21,6 +21,8 @@
         :visitor-typing="visitorTyping"
         @send="onSend"
         @typing="onAdminTyping"
+        @delete="onDelete"
+        @send-file="onSendFile"
       />
     </div>
   </div>
@@ -39,6 +41,8 @@ const props = defineProps({
   selectFn: Function,
   sendFn: Function,
   typingFn: Function,
+  deleteFn: Function,
+  sendFileFn: Function,
 })
 defineEmits(['logout'])
 
@@ -56,5 +60,13 @@ function onSend(text) {
 
 function onAdminTyping() {
   props.typingFn()
+}
+
+function onDelete(messageId) {
+  props.deleteFn(messageId)
+}
+
+function onSendFile(file) {
+  props.sendFileFn(file)
 }
 </script>
