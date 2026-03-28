@@ -1,4 +1,17 @@
 <template>
+  <!-- Popup Bubble -->
+  <Transition name="bubble-pop">
+    <div
+      v-if="showBubble && !isOpen"
+      class="chat-bubble-popup"
+      @click="openFromBubble"
+    >
+      <p class="bubble-greeting">Hello 👋</p>
+      <p class="bubble-msg">Do you have something in your mind to discuss?</p>
+      <button class="bubble-dismiss" @click.stop="dismissBubble" aria-label="Dismiss">✕</button>
+    </div>
+  </Transition>
+
   <!-- FAB Button -->
   <button class="chat-fab" @click="togglePanel" aria-label="Open chat">
     <span v-if="!isOpen" class="chat-fab-emoji">🤙</span>
@@ -115,7 +128,7 @@
 </template>
 
 <script setup>
-import { ref, watch, nextTick, computed } from 'vue'
+import { ref, watch, nextTick, computed, onMounted, onUnmounted } from 'vue'
 import { useChatSession } from './useChatSession.js'
 import './chat.css'
 
@@ -134,6 +147,38 @@ const sessionStarted = ref(false)
 const unreadCount = computed(() => {
   return messages.value.filter(m => m.sender === 'admin' && !m.read).length
 })
+
+// Popup bubble logic
+const showBubble = ref(false)
+let bubbleTimer = null
+
+function scheduleBubble() {
+  // Show for 5s, hide for 20s, repeat
+  showBubble.value = true
+  bubbleTimer = setTimeout(() => {
+    showBubble.value = false
+    bubbleTimer = setTimeout(scheduleBubble, 20000)
+  }, 5000)
+}
+
+function dismissBubble() {
+  showBubble.value = false
+  clearTimeout(bubbleTimer)
+  bubbleTimer = setTimeout(scheduleBubble, 20000)
+}
+
+function openFromBubble() {
+  showBubble.value = false
+  clearTimeout(bubbleTimer)
+  isOpen.value = true
+}
+
+onMounted(() => {
+  // First appearance after 1.5s
+  bubbleTimer = setTimeout(scheduleBubble, 1500)
+})
+
+onUnmounted(() => clearTimeout(bubbleTimer))
 
 function togglePanel() {
   isOpen.value = !isOpen.value
@@ -190,5 +235,85 @@ watch([messages, adminTyping, botTyping], async () => {
 .chat-panel-fade-leave-to {
   opacity: 0;
   transform: translateY(12px) scale(.97);
+}
+
+/* Popup bubble */
+.chat-bubble-popup {
+  position: fixed;
+  bottom: 90px;
+  right: 24px;
+  background: var(--bg);
+  box-shadow: var(--neu-lg);
+  border-radius: var(--r-md) var(--r-md) 0 var(--r-md);
+  padding: 14px 36px 14px 16px;
+  max-width: 230px;
+  cursor: pointer;
+  z-index: 999;
+  border-left: 3px solid var(--primary);
+}
+
+/* Tail pointing to FAB */
+.chat-bubble-popup::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  right: 20px;
+  border-width: 10px 10px 0 0;
+  border-style: solid;
+  border-color: var(--bg) transparent transparent transparent;
+  filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.06));
+}
+
+.bubble-greeting {
+  font-family: var(--orb);
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin: 0 0 5px;
+  letter-spacing: 0.04em;
+}
+
+.bubble-msg {
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  color: var(--text);
+  margin: 0;
+  line-height: 1.45;
+}
+
+.bubble-dismiss {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: none;
+  border: none;
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 2px 4px;
+  line-height: 1;
+  border-radius: 4px;
+  transition: color 0.2s, background 0.2s;
+}
+
+.bubble-dismiss:hover {
+  color: var(--text);
+  background: rgba(var(--primary-rgb), 0.08);
+}
+
+/* Bubble animation */
+.bubble-pop-enter-active {
+  transition: opacity 0.35s ease, transform 0.35s cubic-bezier(.22,1,.36,1);
+}
+.bubble-pop-leave-active {
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+.bubble-pop-enter-from {
+  opacity: 0;
+  transform: translateY(12px) scale(0.92);
+}
+.bubble-pop-leave-to {
+  opacity: 0;
+  transform: translateY(8px) scale(0.95);
 }
 </style>
