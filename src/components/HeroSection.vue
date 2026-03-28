@@ -34,6 +34,7 @@
         </div>
       </div>
       <div class="hero-photo-wrap">
+        <ClockWidget />
         <div class="hero-photo-frame">
           <div class="hud-tl"></div><div class="hud-tr"></div>
           <div class="hud-bl"></div><div class="hud-br"></div>
@@ -48,4 +49,5 @@
 
 <script setup>
 import { photoSrc } from '../assets/photo.js'
+import ClockWidget from './ClockWidget.vue'
 </script>
