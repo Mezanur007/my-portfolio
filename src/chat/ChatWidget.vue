@@ -219,18 +219,18 @@ function formatMsg(text) {
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
-  // Phone numbers → WhatsApp link (formats: +966xxxxxxxxx, 05xxxxxxxx, etc.)
+  // 1. URLs first (must run before phone regex adds any href attributes)
+  safe = safe.replace(
+    /(https?:\/\/[^\s<]+)/g,
+    (url) => `<a href="${url}" target="_blank" rel="noopener" class="chat-link">${url}</a>`
+  )
+  // 2. Phone numbers → WhatsApp link (runs after URL step so wa.me hrefs are not re-processed)
   safe = safe.replace(
     /(\+?\d[\d\s\-().]{7,}\d)/g,
     (match) => {
       const digits = match.replace(/\D/g, '')
       return `<a href="https://wa.me/${digits}" target="_blank" rel="noopener" class="chat-link chat-link-wa">${match}</a>`
     }
-  )
-  // URLs → clickable links
-  safe = safe.replace(
-    /(https?:\/\/[^\s<]+)/g,
-    (url) => `<a href="${url}" target="_blank" rel="noopener" class="chat-link">${url}</a>`
   )
   return safe
 }
