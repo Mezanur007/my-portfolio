@@ -224,7 +224,7 @@ function formatMsg(text) {
     /(\+?\d[\d\s\-().]{7,}\d)/g,
     (match) => {
       const digits = match.replace(/\D/g, '')
-      return `<a href="https://wa.me/${digits}" target="_blank" rel="noopener" class="chat-link chat-link-wa">📞 ${match}</a>`
+      return `<a href="https://wa.me/${digits}" target="_blank" rel="noopener" class="chat-link chat-link-wa">${match}</a>`
     }
   )
   // URLs → clickable links
