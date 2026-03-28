@@ -64,7 +64,7 @@
               class="chat-msg"
               :class="msg.sender === 'bot' ? 'bot' : msg.sender"
             >
-              <div class="chat-bubble">{{ msg.text }}</div>
+              <div class="chat-bubble" v-html="formatMsg(msg.text)"></div>
               <span v-if="msg.sender === 'bot'" class="chat-bot-label">🤖 Bot</span>
               <span class="chat-time">{{ formatTime(msg.sentAt) }}</span>
             </div>
@@ -212,6 +212,29 @@ async function confirmBooking(msgId) {
   pickerTime.value = ''
 }
 
+function formatMsg(text) {
+  if (!text) return ''
+  // Escape HTML first
+  let safe = text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+  // Phone numbers → WhatsApp link (formats: +966xxxxxxxxx, 05xxxxxxxx, etc.)
+  safe = safe.replace(
+    /(\+?\d[\d\s\-().]{7,}\d)/g,
+    (match) => {
+      const digits = match.replace(/\D/g, '')
+      return `<a href="https://wa.me/${digits}" target="_blank" rel="noopener" class="chat-link chat-link-wa">📞 ${match}</a>`
+    }
+  )
+  // URLs → clickable links
+  safe = safe.replace(
+    /(https?:\/\/[^\s<]+)/g,
+    (url) => `<a href="${url}" target="_blank" rel="noopener" class="chat-link">${url}</a>`
+  )
+  return safe
+}
+
 function formatTime(ts) {
   if (!ts) return ''
   const d = ts.toDate ? ts.toDate() : new Date(ts)
@@ -300,6 +323,18 @@ watch([messages, adminTyping, botTyping], async () => {
   color: var(--text);
   background: rgba(var(--primary-rgb), 0.08);
 }
+
+/* Clickable links inside chat bubbles */
+.chat-link {
+  color: var(--primary);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  word-break: break-all;
+  transition: color 0.2s;
+}
+.chat-link:hover { color: var(--orange); }
+.chat-link-wa { text-decoration: none; font-weight: 600; }
+.chat-link-wa:hover { color: var(--green); }
 
 /* Bubble animation */
 .bubble-pop-enter-active {
