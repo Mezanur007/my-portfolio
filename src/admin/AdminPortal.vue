@@ -13,6 +13,7 @@
         :conversations="conversations"
         :active-id="activeSessionId"
         @select="onSelect"
+        @delete-conv="onDeleteConv"
       />
       <MessagePane
         :active-session-id="activeSessionId"
@@ -42,6 +43,7 @@ const props = defineProps({
   sendFn: Function,
   typingFn: Function,
   deleteFn: Function,
+  deleteConvFn: Function,
   sendFileFn: Function,
 })
 defineEmits(['logout'])
@@ -64,6 +66,10 @@ function onAdminTyping() {
 
 function onDelete(messageId) {
   props.deleteFn(messageId)
+}
+
+function onDeleteConv(sessionId) {
+  props.deleteConvFn(sessionId)
 }
 
 function onSendFile(file) {

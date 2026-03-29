@@ -17,7 +17,9 @@
         <div>
           <div class="msg-pane-name">{{ activeConv?.visitorName || 'Visitor' }}</div>
           <div class="msg-pane-sub">
-            {{ visitorTyping ? 'typing...' : 'Active conversation' }}
+            <template v-if="visitorTyping">typing...</template>
+            <template v-else-if="activeConv?.visitorContact">📞 {{ activeConv.visitorContact }}</template>
+            <template v-else>Active conversation</template>
           </div>
         </div>
       </div>

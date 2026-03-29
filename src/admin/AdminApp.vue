@@ -18,6 +18,7 @@
         :send-fn="sendReply"
         :typing-fn="onAdminTyping"
         :delete-fn="deleteMessage"
+        :delete-conv-fn="deleteConversation"
         :send-file-fn="sendFile"
         @logout="logout"
       />
@@ -44,6 +45,7 @@ const {
   sendReply,
   onAdminTyping,
   deleteMessage,
+  deleteConversation,
   sendFile,
 } = useAdminChat()
 </script>

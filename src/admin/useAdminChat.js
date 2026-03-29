@@ -4,7 +4,7 @@ import {
 } from 'firebase/auth'
 import {
   collection, onSnapshot, query, orderBy,
-  addDoc, serverTimestamp, updateDoc, doc, deleteDoc
+  addDoc, serverTimestamp, updateDoc, doc, deleteDoc, getDocs
 } from 'firebase/firestore'
 import { ref as storageRef, uploadBytesResumable, getDownloadURL } from 'firebase/storage'
 import { db, auth, storage } from '../firebase.js'
@@ -96,6 +96,22 @@ export function useAdminChat() {
     await deleteDoc(msgRef)
   }
 
+  async function deleteConversation(sessionId) {
+    // Delete all messages in subcollection first
+    const messagesRef = collection(db, 'conversations', sessionId, 'messages')
+    const snap = await getDocs(messagesRef)
+    await Promise.all(snap.docs.map(d => deleteDoc(d.ref)))
+    // Delete the conversation doc
+    await deleteDoc(doc(db, 'conversations', sessionId))
+    // Clear active state if we deleted the open conversation
+    if (activeSessionId.value === sessionId) {
+      if (unsubMessages) { unsubMessages(); unsubMessages = null }
+      if (unsubSession) { unsubSession(); unsubSession = null }
+      activeSessionId.value = null
+      messages.value = []
+    }
+  }
+
   async function sendFile(file) {
     if (!activeSessionId.value || !file) return
     const path = `chat/${activeSessionId.value}/${Date.now()}_${file.name}`
@@ -156,6 +172,7 @@ export function useAdminChat() {
     sendReply,
     onAdminTyping,
     deleteMessage,
+    deleteConversation,
     sendFile,
   }
 }

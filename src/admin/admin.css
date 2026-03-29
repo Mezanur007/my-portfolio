@@ -206,6 +206,13 @@ body {
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 
+.conv-item-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
 .conv-badge {
   background: #2d4cc8;
   color: #fff;
@@ -221,6 +228,22 @@ body {
   font-family: 'Nunito Sans', sans-serif;
   flex-shrink: 0;
 }
+
+.conv-delete-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: rgba(255,255,255,.25);
+  padding: 3px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity .15s, color .15s, background .15s;
+}
+.conv-item:hover .conv-delete-btn { opacity: 1; }
+.conv-delete-btn:hover { color: #e53e3e; background: rgba(229,62,62,.1); }
 
 /* ── Message Pane ── */
 .msg-pane {
