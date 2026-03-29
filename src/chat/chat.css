@@ -254,6 +254,19 @@
   color: #fff;
 }
 
+/* ── Contact Capture ─────────────────────────────── */
+.contact-capture-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(0,212,255,.25);
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin: 4px 0 8px 0;
+  max-width: 260px;
+}
+
 /* ── Inline Date Picker ─────────────────────────── */
 .date-picker-card {
   background: rgba(255,255,255,.06);

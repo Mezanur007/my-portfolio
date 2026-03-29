@@ -149,6 +149,21 @@ export function useChatSession() {
     return flows[flowName] || []
   }
 
+  async function submitContact(contact) {
+    if (!sessionId.value || !contact.trim()) return
+    await updateDoc(doc(db, 'conversations', sessionId.value), {
+      visitorContact: contact.trim(),
+    })
+    const messagesRef = collection(db, 'conversations', sessionId.value, 'messages')
+    await addDoc(messagesRef, {
+      type: 'date_picker',
+      text: 'Great! Now please select a date and time for your meeting.',
+      sender: 'bot',
+      sentAt: serverTimestamp(),
+      read: true,
+    })
+  }
+
   async function submitBooking(date, time) {
     if (!sessionId.value || !date || !time) return
     const messagesRef = collection(db, 'conversations', sessionId.value, 'messages')
@@ -183,8 +198,8 @@ export function useChatSession() {
     if (flowName === 'book_meeting') {
       const messagesRef = collection(db, 'conversations', sessionId.value, 'messages')
       await addDoc(messagesRef, {
-        type: 'date_picker',
-        text: 'Please select a date and time for your meeting.',
+        type: 'contact_capture',
+        text: 'Please share your email or phone number so we can confirm your booking.',
         sender: 'bot',
         sentAt: serverTimestamp(),
         read: true,
@@ -396,6 +411,7 @@ export function useChatSession() {
     isOpen,
     initSession,
     sendMessage,
+    submitContact,
     submitBooking,
     onTyping,
     greetVisitor,

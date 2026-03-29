@@ -77,6 +77,23 @@
               >{{ opt }}</button>
             </div>
             <div
+              v-if="msg.type === 'contact_capture' && !submittedContacts.has(msg.id)"
+              class="contact-capture-card"
+            >
+              <input
+                v-model="contactInput"
+                class="dp-input"
+                placeholder="Email or mobile number"
+                maxlength="80"
+                @keydown.enter="confirmContact(msg.id)"
+              />
+              <button
+                class="dp-confirm-btn"
+                :disabled="!contactInput.trim()"
+                @click="confirmContact(msg.id)"
+              >Continue →</button>
+            </div>
+            <div
               v-if="msg.type === 'date_picker' && !submittedPickers.has(msg.id)"
               class="date-picker-card"
             >
@@ -132,11 +149,13 @@ import { ref, watch, nextTick, computed, onMounted, onUnmounted } from 'vue'
 import { useChatSession } from './useChatSession.js'
 import './chat.css'
 
-const { sessionId, messages, adminTyping, botTyping, isOpen, initSession, sendMessage: doSend, submitBooking, onTyping, greetVisitor } = useChatSession()
+const { sessionId, messages, adminTyping, botTyping, isOpen, initSession, sendMessage: doSend, submitContact, submitBooking, onTyping, greetVisitor } = useChatSession()
 
 const submittedPickers = ref(new Set())
 const pickerDate = ref('')
 const pickerTime = ref('')
+const contactInput = ref('')
+const submittedContacts = ref(new Set())
 const todayStr = computed(() => new Date().toISOString().slice(0, 10))
 
 const nameInput = ref('')
@@ -201,6 +220,14 @@ async function sendMessage() {
 async function sendQuickReply(label) {
   inputText.value = ''
   await doSend(label)
+}
+
+async function confirmContact(msgId) {
+  if (!contactInput.value.trim()) return
+  submittedContacts.value.add(msgId)
+  submittedContacts.value = new Set(submittedContacts.value)
+  await submitContact(contactInput.value.trim())
+  contactInput.value = ''
 }
 
 async function confirmBooking(msgId) {
