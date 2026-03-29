@@ -151,10 +151,22 @@ export function useChatSession() {
 
   async function submitContact(contact) {
     if (!sessionId.value || !contact.trim()) return
+    const messagesRef = collection(db, 'conversations', sessionId.value, 'messages')
+    // 1. Post visitor's contact as a chat message
+    await addDoc(messagesRef, {
+      text: contact.trim(),
+      sender: 'visitor',
+      sentAt: serverTimestamp(),
+      read: false,
+    })
+    // 2. Save contact on session doc + update inbox preview
     await updateDoc(doc(db, 'conversations', sessionId.value), {
       visitorContact: contact.trim(),
+      lastMessage: contact.trim(),
+      lastMessageAt: serverTimestamp(),
+      unreadByAdmin: messages.value.filter(m => m.sender === 'visitor' && !m.read).length + 1,
     })
-    const messagesRef = collection(db, 'conversations', sessionId.value, 'messages')
+    // 3. Send the date picker
     await addDoc(messagesRef, {
       type: 'date_picker',
       text: 'Great! Now please select a date and time for your meeting.',
