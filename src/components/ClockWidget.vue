@@ -14,6 +14,7 @@
           <span class="tz-icon">◉</span>
           {{ timezone }}
         </div>
+        <div class="clock-date">{{ dateLabel }}</div>
       </div>
       <div class="clock-glow"></div>
     </div>
@@ -28,6 +29,7 @@ const minutes = ref('00')
 const seconds = ref('00')
 const ampm    = ref('AM')
 const timezone = ref('')
+const dateLabel = ref('')
 
 let timer = null
 
@@ -41,6 +43,12 @@ function tick() {
   hours.value   = pad(h)
   minutes.value = pad(now.getMinutes())
   seconds.value = pad(now.getSeconds())
+  dateLabel.value = new Intl.DateTimeFormat(undefined, {
+    weekday: 'long',
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  }).format(now)
 }
 
 onMounted(() => {
@@ -178,6 +186,21 @@ onUnmounted(() => clearInterval(timer))
 
 .clock-wrap:hover .clock-label {
   color: var(--text-dim);
+}
+
+.clock-date {
+  font-family: var(--mono);
+  font-size: 0.58rem;
+  color: var(--text-dim);
+  letter-spacing: 0.08em;
+  text-align: center;
+  margin-top: 5px;
+  text-transform: uppercase;
+  transition: color 0.4s ease;
+}
+
+.clock-wrap:hover .clock-date {
+  color: var(--orange);
 }
 
 .tz-icon {
