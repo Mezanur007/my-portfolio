@@ -5,9 +5,10 @@
     <canvas id="bgCanvas"></canvas>
     <div class="scan"></div>
     <GameModal ref="gameModal" />
-    <NavBar @open-game="gameModal.open()" />
+    <TugOfWarGame ref="tugOfWarGame" />
+    <NavBar @open-game="gameModal.open()" @open-tug-of-war="tugOfWarGame.open()" />
     <HeroSection />
-    <PlayZone @open-game="gameModal.open()" />
+    <PlayZone @open-game="gameModal.open()" @open-tug-of-war="tugOfWarGame.open()" />
     <ProfileSection />
     <CapabilitiesSection />
     <ExperienceSection />
@@ -34,10 +35,12 @@ import ServicesSection from './components/ServicesSection.vue'
 import ContactSection from './components/ContactSection.vue'
 import AppFooter from './components/AppFooter.vue'
 import GameModal from './components/GameModal.vue'
+import TugOfWarGame from './components/TugOfWarGame.vue'
 import ChatWidget from './chat/ChatWidget.vue'
 import UFOWidget from './components/UFOWidget.vue'
 
 const gameModal = ref(null)
+const tugOfWarGame = ref(null)
 const { language, setLanguage } = useLanguage()
 
 onMounted(() => {
@@ -58,7 +61,7 @@ onMounted(() => {
     ring.style.left = rx + 'px'; ring.style.top = ry + 'px'
     requestAnimationFrame(loop)
   })()
-  document.querySelectorAll('a,button,.cell,.play-btn,.mode-btn,.g-btn,.gm-close,.chat-fab,.chat-send').forEach(el => {
+  document.querySelectorAll('a,button,.cell,.play-btn,.mode-btn,.g-btn,.gm-close,.chat-fab,.chat-send,.num-btn,.clear-btn,.tug-btn,.close-btn,.restart-btn').forEach(el => {
     el.addEventListener('mouseenter', () => { cur.style.width = '18px'; cur.style.height = '18px'; ring.style.width = '48px'; ring.style.height = '48px' })
     el.addEventListener('mouseleave', () => { cur.style.width = '8px'; cur.style.height = '8px'; ring.style.width = '32px'; ring.style.height = '32px' })
   })
