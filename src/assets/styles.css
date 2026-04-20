@@ -572,9 +572,9 @@ footer p { font-size: .64rem; letter-spacing: 2px; color: var(--text-muted); fon
 .mode-btn.active { box-shadow: var(--neu-in); color: var(--primary); }
 .mode-btn:hover { color: var(--text); }
 
-/* ── THEME TOGGLE BUTTON ── */
+/* ── THEME & LANGUAGE TOGGLE BUTTONS ── */
 .nav-right { display: flex; align-items: center; gap: 16px; }
-.theme-toggle {
+.theme-toggle, .lang-toggle {
   width: 42px; height: 42px; border-radius: 50%;
   background: var(--bg); box-shadow: var(--neu-sm);
   border: none; cursor: none;
@@ -582,8 +582,10 @@ footer p { font-size: .64rem; letter-spacing: 2px; color: var(--text-muted); fon
   color: var(--text-dim);
   transition: box-shadow .2s, color .2s, transform .15s;
   flex-shrink: 0;
+  font-family: var(--orb); font-size: .65rem; font-weight: 700;
+  letter-spacing: 1px;
 }
-.theme-toggle:hover { box-shadow: var(--neu-in); color: var(--primary); transform: scale(.96); }
+.theme-toggle:hover, .lang-toggle:hover { box-shadow: var(--neu-in); color: var(--primary); transform: scale(.96); }
 .theme-toggle svg { width: 18px; height: 18px; }
 
 /* smooth theme transition */
@@ -652,6 +654,72 @@ html.dark .sb-fill::after { background: var(--bg); }
 html.dark .ms { border-left-color: rgba(91,134,255,.2); }
 html.dark .ms.active, html.dark .ms:hover { border-left-color: var(--primary); }
 
+/* ════════════════════════════════════════
+   RTL SUPPORT
+   Toggled by adding class "rtl" to <html>
+   ════════════════════════════════════════ */
+html.rtl {
+  direction: rtl;
+  text-align: right;
+}
+
+/* Navigation RTL */
+html.rtl .nav-id { flex-direction: row-reverse; }
+html.rtl .nav-name { letter-spacing: 2px; }
+html.rtl .nav-links { gap: 32px; }
+html.rtl .nav-right { flex-direction: row-reverse; }
+
+/* Hero section RTL */
+html.rtl .hero-layout { grid-template-columns: auto 1fr; }
+html.rtl .hero-content { text-align: right; }
+html.rtl .h-tag { flex-direction: row-reverse; }
+html.rtl h1.hero-name { letter-spacing: -2px; }
+html.rtl .hero-sub { flex-direction: row-reverse; justify-content: flex-end; }
+html.rtl .hero-btns { justify-content: flex-end; }
+html.rtl .hero-metrics { justify-content: flex-end; }
+html.rtl .hero-photo-wrap { margin-right: auto; margin-left: 0; }
+
+/* Grid layouts RTL */
+html.rtl .profile-grid { grid-auto-flow: row; }
+html.rtl .cap-card { text-align: right; }
+html.rtl .cap-n-tag { right: auto; left: 16px; }
+html.rtl .cap-ico { margin-right: 0; margin-left: 0; }
+
+/* Experience RTL */
+html.rtl .ms {
+  border-left: none;
+  border-right: 4px solid rgba(45,76,200,.2);
+  padding-right: 32px;
+  padding-left: 28px;
+}
+html.rtl .ms.active { border-right-color: var(--primary); border-left-color: transparent; }
+html.rtl .ms:hover { border-right-color: var(--primary); border-left-color: transparent; }
+html.rtl .ms-meta { justify-content: flex-end; }
+html.rtl .ms-loc-wrap { justify-content: flex-end; }
+html.rtl .ms-skills { justify-content: flex-end; }
+html.rtl .ms-body { max-width: 640px; }
+
+/* Products RTL */
+html.rtl .prod-card { text-align: right; }
+html.rtl .p-glow { right: auto; left: -60px; }
+html.rtl .p-type { flex-direction: row-reverse; }
+html.rtl .p-type::before { order: 2; }
+
+/* Services RTL */
+html.rtl .svc-item { text-align: center; }
+
+/* Contact RTL */
+html.rtl #contact { text-align: center; }
+html.rtl .c-links { justify-content: center; }
+html.rtl .c-link { gap: 10px; }
+
+/* Footer RTL */
+html.rtl footer { justify-content: space-between; }
+
+/* Dark mode + RTL */
+html.dark.rtl .ms { border-right-color: rgba(91,134,255,.2); }
+html.dark.rtl .ms.active, html.dark.rtl .ms:hover { border-right-color: var(--primary); }
+
 /* ── RESPONSIVE ── */
 @media(max-width:1020px) {
   .cap-grid { grid-template-columns: repeat(2,1fr); }
@@ -676,4 +744,10 @@ html.dark .ms.active, html.dark .ms:hover { border-left-color: var(--primary); }
   h1.hero-name { letter-spacing: -2px; }
   .svc-grid { grid-template-columns: repeat(2,1fr); }
   .game-modal { padding: 32px 24px; }
+
+  /* Mobile RTL fixes */
+  html.rtl #hero { padding-right: 20px; padding-left: 20px; }
+  html.rtl .hero-layout { grid-template-columns: 1fr; }
+  html.rtl .hero-photo-wrap { margin-right: 0; margin-left: 0; }
+  html.rtl .profile-grid { gap: 48px; }
 }

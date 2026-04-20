@@ -22,6 +22,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import { useLanguage } from './composables/useLanguage'
 import NavBar from './components/NavBar.vue'
 import HeroSection from './components/HeroSection.vue'
 import PlayZone from './components/PlayZone.vue'
@@ -37,8 +38,13 @@ import ChatWidget from './chat/ChatWidget.vue'
 import UFOWidget from './components/UFOWidget.vue'
 
 const gameModal = ref(null)
+const { language, setLanguage } = useLanguage()
 
 onMounted(() => {
+  // Initialize language on first load
+  const saved = localStorage.getItem('language') || 'en'
+  setLanguage(saved)
+  
   // Custom cursor
   const cur = document.getElementById('cur')
   const ring = document.getElementById('cur-ring')

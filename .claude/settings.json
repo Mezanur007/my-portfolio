@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "statusMessage": "Checking for uncommitted changes before deploy...",
+            "command": "python3 -c \"\nimport sys, json, subprocess, re\ndata = json.load(sys.stdin)\ncmd = data.get('tool_input', {}).get('command', '')\nif re.search(r'vercel.*(--prod)', cmd):\n    result = subprocess.run(['git.exe', '-C', '/mnt/d/My Projects/My Portfolio', 'status', '--porcelain'], capture_output=True, text=True)\n    if result.stdout.strip():\n        print('{\\\"continue\\\": false, \\\"stopReason\\\": \\\"Uncommitted changes detected. Commit and merge a PR first before deploying.\\\"}')\" 2>/dev/null || true"
+          }
+        ]
+      }
+    ]
+  }
+}

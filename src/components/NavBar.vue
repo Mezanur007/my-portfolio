@@ -5,15 +5,18 @@
       <div class="nav-name">MEZANUR MARUF</div>
     </div>
     <ul class="nav-links">
-      <li><a href="#profile">Profile</a></li>
-      <li><a href="#capabilities">Skills</a></li>
-      <li><a href="#experience">Experience</a></li>
-      <li><a href="#products">Products</a></li>
-      <li><a href="#contact">Connect</a></li>
+      <li><a href="#profile">{{ language === 'en' ? 'Profile' : 'الملف الشخصي' }}</a></li>
+      <li><a href="#capabilities">{{ language === 'en' ? 'Skills' : 'المهارات' }}</a></li>
+      <li><a href="#experience">{{ language === 'en' ? 'Experience' : 'الخبرة' }}</a></li>
+      <li><a href="#products">{{ language === 'en' ? 'Products' : 'المنتجات' }}</a></li>
+      <li><a href="#contact">{{ language === 'en' ? 'Connect' : 'تواصل معي' }}</a></li>
     </ul>
     <div class="nav-right">
-      <div class="nav-status">ONLINE // RIYADH KSA</div>
-      <button class="theme-toggle" @click="toggleTheme" :title="isDark ? 'Switch to light mode' : 'Switch to dark mode'">
+      <div class="nav-status">{{ language === 'en' ? 'ONLINE' : 'متواجد' }} // {{ language === 'en' ? 'RIYADH KSA' : 'الرياض، السعودية' }}</div>
+      <button class="lang-toggle" @click="toggleLanguage" :title="language === 'en' ? 'Switch to Arabic' : 'الانتقال إلى الإنجليزية'" aria-label="Toggle language">
+        {{ language === 'en' ? 'AR' : 'EN' }}
+      </button>
+      <button class="theme-toggle" @click="toggleTheme" :title="isDark ? (language === 'en' ? 'Switch to light mode' : 'التبديل إلى الوضع الفاتح') : (language === 'en' ? 'Switch to dark mode' : 'التبديل إلى الوضع الداكن')" aria-label="Toggle theme">
         <!-- Sun icon (shown in dark mode) -->
         <svg v-if="isDark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="12" cy="12" r="5"/>
@@ -36,8 +39,10 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
+import { useLanguage } from '../composables/useLanguage'
 
+const { language, setLanguage } = useLanguage()
 const isDark = ref(false)
 
 function applyTheme(dark) {
@@ -48,6 +53,10 @@ function applyTheme(dark) {
 
 function toggleTheme() {
   applyTheme(!isDark.value)
+}
+
+function toggleLanguage() {
+  setLanguage(language.value === 'en' ? 'ar' : 'en')
 }
 
 onMounted(() => {

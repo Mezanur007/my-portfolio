@@ -3,21 +3,21 @@
     <div class="game-modal">
       <div class="gm-corner tl"></div><div class="gm-corner tr"></div>
       <div class="gm-corner bl"></div><div class="gm-corner br"></div>
-      <button class="gm-close" @click="close">[ CLOSE ]</button>
+      <button class="gm-close" @click="close">{{ language === 'en' ? '[ CLOSE ]' : '[ إغلاق ]' }}</button>
       <div class="gm-head">
-        <div class="gm-title">TIC<span>-TAC-</span>TOE</div>
+        <div class="gm-title">{{ language === 'en' ? 'TIC' : 'تك' }}<span>{{ language === 'en' ? '-TAC-' : ' تاك ' }}</span>{{ language === 'en' ? 'TOE' : 'تو' }}</div>
         <div class="gm-status" id="gStatus">{{ statusText }}</div>
       </div>
       <div class="gm-mode">
-        <button class="mode-btn" :class="{ active: gameMode === '2p' }" @click="setMode('2p')">2 PLAYERS</button>
-        <button class="mode-btn" :class="{ active: gameMode === 'ai' }" @click="setMode('ai')">VS AI</button>
+        <button class="mode-btn" :class="{ active: gameMode === '2p' }" @click="setMode('2p')">{{ language === 'en' ? '2 PLAYERS' : 'لاعبان' }}</button>
+        <button class="mode-btn" :class="{ active: gameMode === 'ai' }" @click="setMode('ai')">{{ language === 'en' ? 'VS AI' : 'ضد الذكاء الاصطناعي' }}</button>
       </div>
       <div class="gm-score">
-        <div class="sc-box"><div class="sc-label">PLAYER X</div><div class="sc-val x-col">{{ scores.X }}</div></div>
+        <div class="sc-box"><div class="sc-label">{{ language === 'en' ? 'PLAYER X' : 'اللاعب X' }}</div><div class="sc-val x-col">{{ scores.X }}</div></div>
         <div class="sc-sep">/</div>
-        <div class="sc-box"><div class="sc-label">DRAWS</div><div class="sc-val d-col">{{ scores.D }}</div></div>
+        <div class="sc-box"><div class="sc-label">{{ language === 'en' ? 'DRAWS' : 'التعادلات' }}</div><div class="sc-val d-col">{{ scores.D }}</div></div>
         <div class="sc-sep">/</div>
-        <div class="sc-box"><div class="sc-label" id="p2label">{{ gameMode === 'ai' ? 'AI O' : 'PLAYER O' }}</div><div class="sc-val o-col">{{ scores.O }}</div></div>
+        <div class="sc-box"><div class="sc-label" id="p2label">{{ gameMode === 'ai' ? (language === 'en' ? 'AI O' : 'الذكاء الاصطناعي O') : (language === 'en' ? 'PLAYER O' : 'اللاعب O') }}</div><div class="sc-val o-col">{{ scores.O }}</div></div>
       </div>
       <div class="gm-board" id="board">
         <div
@@ -34,8 +34,8 @@
         </div>
       </div>
       <div class="gm-btns">
-        <button class="g-btn g-btn-primary" @click="resetGame">NEW GAME</button>
-        <button class="g-btn g-btn-sec" @click="resetScores">RESET SCORES</button>
+        <button class="g-btn g-btn-primary" @click="resetGame">{{ language === 'en' ? 'NEW GAME' : 'لعبة جديدة' }}</button>
+        <button class="g-btn g-btn-sec" @click="resetScores">{{ language === 'en' ? 'RESET SCORES' : 'إعادة تعيين النقاط' }}</button>
       </div>
     </div>
   </div>
@@ -43,6 +43,9 @@
 
 <script setup>
 import { ref, computed } from 'vue'
+import { useLanguage } from '../composables/useLanguage'
+
+const { language } = useLanguage()
 
 const isOpen = ref(false)
 const board = ref(Array(9).fill(null))
@@ -52,7 +55,7 @@ const gameMode = ref('2p')
 const scores = ref({ X: 0, O: 0, D: 0 })
 const winLine = ref([])
 const winnerMark = ref(null)
-const statusText = ref("▶ PLAYER X'S TURN")
+const statusText = ref(() => language.value === 'en' ? "▶ PLAYER X'S TURN" : "▶ دور اللاعب X")
 
 const WINS = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]]
 
@@ -137,24 +140,40 @@ function endGame(result) {
   gameOver.value = true
   if (result === 'draw') {
     scores.value.D++
-    statusText.value = 'DRAW — Well played both sides'
+    statusText.value = language.value === 'en'
+      ? '▶ DRAW — Well played both sides'
+      : '▶ متعادل — لعبة رائعة من الجانبين'
   } else {
     const w = result.winner
     scores.value[w]++
     winLine.value = result.line
     winnerMark.value = w
-    const label = gameMode.value === 'ai' && w === 'O' ? 'AI WINS'
-      : gameMode.value === 'ai' && w === 'X' ? 'PLAYER X WINS!'
-      : w + ' WINS!'
-    statusText.value = '▶ ' + label + ' — Press NEW GAME to continue'
+    if (language.value === 'en') {
+      const label = gameMode.value === 'ai' && w === 'O' ? 'AI WINS'
+        : gameMode.value === 'ai' && w === 'X' ? 'PLAYER X WINS!'
+        : w + ' WINS!'
+      statusText.value = '▶ ' + label + ' — Press NEW GAME to continue'
+    } else {
+      const label = gameMode.value === 'ai' && w === 'O' ? 'الذكاء الاصطناعي يفوز'
+        : gameMode.value === 'ai' && w === 'X' ? 'اللاعب X يفوز!'
+        : w + ' يفوز!'
+      statusText.value = '▶ ' + label + ' — اضغط لعبة جديدة للمتابعة'
+    }
   }
 }
 
 function updateStatus() {
-  const next = gameMode.value === 'ai' && current.value === 'O'
-    ? 'AI is thinking...'
-    : current.value === 'X' ? "PLAYER X'S TURN" : "PLAYER O'S TURN"
-  statusText.value = '▶ ' + next
+  if (language.value === 'en') {
+    const next = gameMode.value === 'ai' && current.value === 'O'
+      ? 'AI is thinking...'
+      : current.value === 'X' ? "PLAYER X'S TURN" : "PLAYER O'S TURN"
+    statusText.value = '▶ ' + next
+  } else {
+    const next = gameMode.value === 'ai' && current.value === 'O'
+      ? 'الذكاء الاصطناعي يفكر...'
+      : current.value === 'X' ? "دور اللاعب X" : "دور اللاعب O"
+    statusText.value = '▶ ' + next
+  }
 }
 
 function resetGame() {
@@ -163,7 +182,7 @@ function resetGame() {
   gameOver.value = false
   winLine.value = []
   winnerMark.value = null
-  statusText.value = "▶ PLAYER X'S TURN"
+  statusText.value = language.value === 'en' ? "▶ PLAYER X'S TURN" : "▶ دور اللاعب X"
 }
 
 function resetScores() {
