@@ -9,6 +9,7 @@
       <li><a href="#capabilities">{{ language === 'en' ? 'Skills' : 'المهارات' }}</a></li>
       <li><a href="#experience">{{ language === 'en' ? 'Experience' : 'الخبرة' }}</a></li>
       <li><a href="#products">{{ language === 'en' ? 'Products' : 'المنتجات' }}</a></li>
+      <li><a href="#projects">{{ language === 'en' ? 'Projects' : 'المشاريع' }}</a></li>
       <li><a href="#contact">{{ language === 'en' ? 'Connect' : 'تواصل معي' }}</a></li>
     </ul>
     <div class="nav-right">

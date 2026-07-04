@@ -13,6 +13,7 @@
     <CapabilitiesSection />
     <ExperienceSection />
     <ProductsSection />
+    <ProjectsSection />
     <ServicesSection />
     <ContactSection />
     <AppFooter />
@@ -31,6 +32,7 @@ import ProfileSection from './components/ProfileSection.vue'
 import CapabilitiesSection from './components/CapabilitiesSection.vue'
 import ExperienceSection from './components/ExperienceSection.vue'
 import ProductsSection from './components/ProductsSection.vue'
+import ProjectsSection from './components/ProjectsSection.vue'
 import ServicesSection from './components/ServicesSection.vue'
 import ContactSection from './components/ContactSection.vue'
 import AppFooter from './components/AppFooter.vue'
@@ -94,7 +96,7 @@ onMounted(() => {
   const obs = new IntersectionObserver(entries => {
     entries.forEach(e => {
       if (e.isIntersecting) {
-        const parent = e.target.closest('.cap-grid,.svc-grid,.prod-grid,.mlog')
+        const parent = e.target.closest('.cap-grid,.svc-grid,.prod-grid,.projects-grid,.mlog')
         const delay = parent ? Array.from(parent.children).indexOf(e.target) * 65 : 0
         setTimeout(() => e.target.classList.add('on'), delay)
       }

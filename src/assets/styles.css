@@ -424,6 +424,33 @@ h1.hero-name .line2 { color: var(--primary); display: block; }
 }
 .p-chip:hover { box-shadow: var(--neu-in); color: var(--text); }
 
+/* ── PROJECTS ── */
+#projects { padding: 120px 0; background: var(--bg); }
+.projects-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 24px; }
+.project-card { background: var(--bg); }
+.project-head {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: 16px; margin-bottom: 4px;
+}
+.project-status {
+  flex: 0 0 auto;
+  font-size: .58rem; letter-spacing: 1px; text-transform: uppercase;
+  color: var(--green); font-family: var(--orb); font-weight: 700;
+  background: var(--bg); box-shadow: var(--neu-sm);
+  border-radius: var(--r-pill); padding: 5px 12px;
+}
+.project-links {
+  display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px;
+}
+.project-links a {
+  font-family: var(--orb); font-size: .6rem; letter-spacing: 1px;
+  text-transform: uppercase; color: var(--primary); text-decoration: none;
+  background: var(--bg); box-shadow: var(--neu-sm);
+  border-radius: var(--r-sm); padding: 8px 12px;
+  transition: box-shadow .2s, color .2s;
+}
+.project-links a:hover { box-shadow: var(--neu-in); color: var(--text); }
+
 /* ── SERVICES ── */
 #services { padding: 120px 0; background: var(--bg); }
 .svc-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 20px; background: none; border: none; }
@@ -704,6 +731,8 @@ html.rtl .prod-card { text-align: right; }
 html.rtl .p-glow { right: auto; left: -60px; }
 html.rtl .p-type { flex-direction: row-reverse; }
 html.rtl .p-type::before { order: 2; }
+html.rtl .project-head { flex-direction: row-reverse; }
+html.rtl .project-links { justify-content: flex-end; }
 
 /* Services RTL */
 html.rtl .svc-item { text-align: center; }
@@ -721,10 +750,17 @@ html.dark.rtl .ms { border-right-color: rgba(91,134,255,.2); }
 html.dark.rtl .ms.active, html.dark.rtl .ms:hover { border-right-color: var(--primary); }
 
 /* ── RESPONSIVE ── */
+@media(max-width:1180px) {
+  nav { padding: 18px 28px; }
+  .nav-links { gap: 18px; }
+  .nav-links a { font-size: .68rem; letter-spacing: 1.5px; }
+  .nav-status { display: none; }
+}
 @media(max-width:1020px) {
   .cap-grid { grid-template-columns: repeat(2,1fr); }
   .svc-grid { grid-template-columns: repeat(2,1fr); }
   .prod-grid { grid-template-columns: 1fr; }
+  .projects-grid { grid-template-columns: 1fr; }
   .profile-grid { grid-template-columns: 1fr; gap: 48px; }
   .hero-layout { grid-template-columns: 1fr; gap: 40px; }
   .hero-photo-frame { width: 260px; }
@@ -733,7 +769,7 @@ html.dark.rtl .ms.active, html.dark.rtl .ms:hover { border-right-color: var(--pr
 @media(max-width:720px) {
   nav { padding: 14px 20px; }
   .nav-links { display: none; }
-  #hero,#profile,#capabilities,#experience,#products,#services,#contact { padding: 80px 0; }
+  #hero,#profile,#capabilities,#experience,#products,#projects,#services,#contact { padding: 80px 0; }
   .inner { padding: 0 20px; }
   #hero { padding-top: 100px; padding-left: 20px; padding-right: 20px; }
   footer { padding: 20px; flex-direction: column; text-align: center; }
@@ -743,6 +779,8 @@ html.dark.rtl .ms.active, html.dark.rtl .ms:hover { border-right-color: var(--pr
   .ms-meta { flex-direction: column; gap: 4px; }
   h1.hero-name { letter-spacing: -2px; }
   .svc-grid { grid-template-columns: repeat(2,1fr); }
+  .project-head { flex-direction: column; align-items: flex-start; }
+  html.rtl .project-head { align-items: flex-end; }
   .game-modal { padding: 32px 24px; }
 
   /* Mobile RTL fixes */
