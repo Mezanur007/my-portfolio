@@ -13,6 +13,7 @@
       <div class="projects-grid">
         <article v-for="project in projects" :key="project.title.en" class="prod-card project-card reveal">
           <div class="p-glow"></div>
+          <div class="project-icon" aria-hidden="true">{{ project.icon }}</div>
           <div class="project-head">
             <div class="p-type">{{ text(project.category) }}</div>
             <span class="project-status">{{ text(project.status) }}</span>
@@ -51,6 +52,7 @@ const text = (value) => value[language.value] || value.en
 
 const projects = computed(() => [
   {
+    icon: '🧑‍⚖️',
     category: { en: 'Open Source', ar: 'مصدر مفتوح' },
     status: { en: 'Public work', ar: 'عمل عام' },
     title: { en: 'Codex Skills & tldr-pages', ar: 'مهارات Codex و tldr-pages' },
@@ -75,6 +77,7 @@ const projects = computed(() => [
     ]
   },
   {
+    icon: '🤖',
     category: { en: 'AI & Automation', ar: 'الذكاء الاصطناعي والأتمتة' },
     status: { en: 'Public + private', ar: 'عام وخاص' },
     title: { en: 'Calling Agent Systems', ar: 'أنظمة وكلاء الاتصال' },
@@ -95,6 +98,7 @@ const projects = computed(() => [
     ]
   },
   {
+    icon: '☁️',
     category: { en: 'SaaS Platform', ar: 'منصة SaaS' },
     status: { en: 'Private', ar: 'خاص' },
     title: { en: 'Smart Coordinator Suite', ar: 'حزمة Smart Coordinator' },
@@ -110,6 +114,7 @@ const projects = computed(() => [
     ]
   },
   {
+    icon: '📱',
     category: { en: 'Operations', ar: 'العمليات' },
     status: { en: 'Private', ar: 'خاص' },
     title: { en: 'B-IT PulseWork & Sales Tools', ar: 'B-IT PulseWork وأدوات المبيعات' },
@@ -125,6 +130,7 @@ const projects = computed(() => [
     ]
   },
   {
+    icon: '🌐',
     category: { en: 'Business Web', ar: 'ويب الأعمال' },
     status: { en: 'Client-safe', ar: 'ملخص آمن' },
     title: { en: 'B-IT Website, Admin & Chat', ar: 'موقع B-IT ولوحة الإدارة والمحادثة' },
@@ -140,6 +146,7 @@ const projects = computed(() => [
     ]
   },
   {
+    icon: '🛠️',
     category: { en: 'Developer Tools', ar: 'أدوات المطور' },
     status: { en: 'Public + private', ar: 'عام وخاص' },
     title: { en: 'Portfolio, Amanah AI & Bulk Email', ar: 'المعرض وAmanah AI والبريد الجماعي' },
