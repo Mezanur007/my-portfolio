@@ -13,13 +13,16 @@
       <div class="projects-grid">
         <article v-for="project in projects" :key="project.title.en" class="prod-card project-card reveal">
           <div class="p-glow"></div>
-          <div class="project-icon" aria-hidden="true">{{ project.icon }}</div>
+          <div class="project-top">
+            <div class="project-icon" aria-hidden="true">{{ project.icon }}</div>
+            <span class="project-status">{{ text(project.status) }}</span>
+          </div>
           <div class="project-head">
             <div class="p-type">{{ text(project.category) }}</div>
-            <span class="project-status">{{ text(project.status) }}</span>
           </div>
           <h3>{{ text(project.title) }}</h3>
           <p>{{ text(project.description) }}</p>
+          <div class="project-impact">{{ text(project.impact) }}</div>
 
           <div v-if="project.links.length" class="project-links">
             <a
@@ -52,13 +55,17 @@ const text = (value) => value[language.value] || value.en
 
 const projects = computed(() => [
   {
-    icon: '🧑‍⚖️',
+    icon: 'OSS',
     category: { en: 'Open Source', ar: 'مصدر مفتوح' },
     status: { en: 'Public work', ar: 'عمل عام' },
     title: { en: 'Codex Skills & tldr-pages', ar: 'مهارات Codex و tldr-pages' },
     description: {
       en: 'Built a public Senior Engineering Board skill for adversarial audits, merged the try-rs command page into tldr-pages, and gained Flutter issue triage experience through duplicate PR handling.',
       ar: 'بنيت مهارة Senior Engineering Board العامة لمراجعات هندسية نقدية، وتم دمج صفحة try-rs في tldr-pages، واكتسبت خبرة في فرز قضايا Flutter من خلال طلبات مكررة.'
+    },
+    impact: {
+      en: 'Proof of disciplined contribution flow, review thinking, and public documentation work.',
+      ar: 'إثبات لأسلوب مساهمة منظم، تفكير مراجعة هندسية، وعمل توثيق عام.'
     },
     links: [
       {
@@ -77,13 +84,17 @@ const projects = computed(() => [
     ]
   },
   {
-    icon: '🤖',
+    icon: 'AI',
     category: { en: 'AI & Automation', ar: 'الذكاء الاصطناعي والأتمتة' },
     status: { en: 'Public + private', ar: 'عام وخاص' },
     title: { en: 'Calling Agent Systems', ar: 'أنظمة وكلاء الاتصال' },
     description: {
       en: 'Realtime voice and restaurant calling assistant work focused on call handling, structured workflows, and human-ready operational handoff.',
       ar: 'عمل على مساعدات اتصال صوتية فورية للمطاعم يركز على إدارة المكالمات، سير العمل المنظم، والتسليم التشغيلي الجاهز للفريق.'
+    },
+    impact: {
+      en: 'Turns repetitive call handling into structured, trackable business workflows.',
+      ar: 'تحويل إدارة المكالمات المتكررة إلى سير عمل منظم وقابل للمتابعة.'
     },
     links: [
       {
@@ -98,13 +109,17 @@ const projects = computed(() => [
     ]
   },
   {
-    icon: '☁️',
+    icon: 'API',
     category: { en: 'SaaS Platform', ar: 'منصة SaaS' },
     status: { en: 'Private', ar: 'خاص' },
     title: { en: 'Smart Coordinator Suite', ar: 'حزمة Smart Coordinator' },
     description: {
       en: 'Multi-part SaaS ecosystem covering API services, tenant dashboard, SaaS administration, and customer mobile experience.',
       ar: 'منظومة SaaS متعددة الأجزاء تشمل خدمات API، لوحة المستأجر، إدارة SaaS، وتجربة عميل عبر الهاتف.'
+    },
+    impact: {
+      en: 'Designed around multi-tenant control, operational visibility, and customer access.',
+      ar: 'مصمم للتحكم متعدد المستأجرين، وضوح العمليات، ووصول العملاء.'
     },
     links: [],
     chips: [
@@ -114,13 +129,17 @@ const projects = computed(() => [
     ]
   },
   {
-    icon: '📱',
+    icon: 'OPS',
     category: { en: 'Operations', ar: 'العمليات' },
     status: { en: 'Private', ar: 'خاص' },
     title: { en: 'B-IT PulseWork & Sales Tools', ar: 'B-IT PulseWork وأدوات المبيعات' },
     description: {
       en: 'Internal workforce, team workflow, sales visibility, and business monitoring tools for daily operational control.',
       ar: 'أدوات داخلية لإدارة فرق العمل، سير العمليات، متابعة المبيعات، ومراقبة الأعمال اليومية.'
+    },
+    impact: {
+      en: 'Improves field visibility, accountability, and daily execution for operating teams.',
+      ar: 'تحسين وضوح العمل الميداني، المساءلة، والتنفيذ اليومي للفرق.'
     },
     links: [],
     chips: [
@@ -130,13 +149,17 @@ const projects = computed(() => [
     ]
   },
   {
-    icon: '🌐',
+    icon: 'WEB',
     category: { en: 'Business Web', ar: 'ويب الأعمال' },
     status: { en: 'Client-safe', ar: 'ملخص آمن' },
     title: { en: 'B-IT Website, Admin & Chat', ar: 'موقع B-IT ولوحة الإدارة والمحادثة' },
     description: {
       en: 'Delivered lead capture, guided chat flows, meeting scheduling, PDF/export workflows, certificates, legal pages, and admin chat improvements.',
       ar: 'تنفيذ التقاط العملاء المحتملين، مسارات محادثة موجهة، جدولة اجتماعات، تصدير PDF، شهادات، صفحات قانونية، وتحسينات محادثة الإدارة.'
+    },
+    impact: {
+      en: 'Connects marketing, qualification, booking, documents, and admin follow-up.',
+      ar: 'ربط التسويق، تأهيل العملاء، الحجز، المستندات، ومتابعة الإدارة.'
     },
     links: [],
     chips: [
@@ -146,13 +169,17 @@ const projects = computed(() => [
     ]
   },
   {
-    icon: '🛠️',
+    icon: 'DEV',
     category: { en: 'Developer Tools', ar: 'أدوات المطور' },
     status: { en: 'Public + private', ar: 'عام وخاص' },
     title: { en: 'Portfolio, Amanah AI & Bulk Email', ar: 'المعرض وAmanah AI والبريد الجماعي' },
     description: {
       en: 'Bilingual Vue/Vite portfolio work plus high-level AI platform and operational messaging automation projects with private implementation details protected.',
       ar: 'معرض أعمال ثنائي اللغة باستخدام Vue/Vite، مع أعمال منصة ذكاء اصطناعي وأتمتة رسائل تشغيلية مع الحفاظ على خصوصية تفاصيل التنفيذ.'
+    },
+    impact: {
+      en: 'Public-safe engineering presentation backed by practical developer workflow tooling.',
+      ar: 'عرض هندسي آمن للعامة مدعوم بأدوات عملية لسير عمل المطور.'
     },
     links: [
       {
