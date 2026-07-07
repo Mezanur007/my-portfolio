@@ -11,10 +11,18 @@
       </div>
 
       <div class="projects-grid">
-        <article v-for="project in projects" :key="project.title.en" class="prod-card project-card reveal">
+        <article
+          v-for="project in projects"
+          :key="project.title.en"
+          class="prod-card project-card reveal"
+          :style="{ '--project-accent': project.accent }"
+        >
           <div class="p-glow"></div>
           <div class="project-top">
-            <div class="project-icon" aria-hidden="true">{{ project.icon }}</div>
+            <div class="project-icon" aria-hidden="true">
+              <span class="project-mark">{{ project.icon }}</span>
+              <span class="project-code">{{ project.code }}</span>
+            </div>
             <span class="project-status">{{ text(project.status) }}</span>
           </div>
           <div class="project-head">
@@ -55,7 +63,9 @@ const text = (value) => value[language.value] || value.en
 
 const projects = computed(() => [
   {
-    icon: 'OSS',
+    icon: '⚖️',
+    code: 'OSS',
+    accent: '#2D4CC8',
     category: { en: 'Open Source', ar: 'مصدر مفتوح' },
     status: { en: 'Public work', ar: 'عمل عام' },
     title: { en: 'Codex Skills & tldr-pages', ar: 'مهارات Codex و tldr-pages' },
@@ -84,7 +94,9 @@ const projects = computed(() => [
     ]
   },
   {
-    icon: 'AI',
+    icon: '🤖',
+    code: 'AI',
+    accent: '#6F42C1',
     category: { en: 'AI & Automation', ar: 'الذكاء الاصطناعي والأتمتة' },
     status: { en: 'Public + private', ar: 'عام وخاص' },
     title: { en: 'Calling Agent Systems', ar: 'أنظمة وكلاء الاتصال' },
@@ -109,7 +121,9 @@ const projects = computed(() => [
     ]
   },
   {
-    icon: 'API',
+    icon: '☁️',
+    code: 'API',
+    accent: '#0B8F6A',
     category: { en: 'SaaS Platform', ar: 'منصة SaaS' },
     status: { en: 'Private', ar: 'خاص' },
     title: { en: 'Smart Coordinator Suite', ar: 'حزمة Smart Coordinator' },
@@ -129,7 +143,9 @@ const projects = computed(() => [
     ]
   },
   {
-    icon: 'OPS',
+    icon: '📱',
+    code: 'OPS',
+    accent: '#E07A3A',
     category: { en: 'Operations', ar: 'العمليات' },
     status: { en: 'Private', ar: 'خاص' },
     title: { en: 'B-IT PulseWork & Sales Tools', ar: 'B-IT PulseWork وأدوات المبيعات' },
@@ -149,7 +165,9 @@ const projects = computed(() => [
     ]
   },
   {
-    icon: 'WEB',
+    icon: '🌐',
+    code: 'WEB',
+    accent: '#0B5FFF',
     category: { en: 'Business Web', ar: 'ويب الأعمال' },
     status: { en: 'Client-safe', ar: 'ملخص آمن' },
     title: { en: 'B-IT Website, Admin & Chat', ar: 'موقع B-IT ولوحة الإدارة والمحادثة' },
@@ -169,7 +187,9 @@ const projects = computed(() => [
     ]
   },
   {
-    icon: 'DEV',
+    icon: '🛠️',
+    code: 'DEV',
+    accent: '#10AB7C',
     category: { en: 'Developer Tools', ar: 'أدوات المطور' },
     status: { en: 'Public + private', ar: 'عام وخاص' },
     title: { en: 'Portfolio, Amanah AI & Bulk Email', ar: 'المعرض وAmanah AI والبريد الجماعي' },

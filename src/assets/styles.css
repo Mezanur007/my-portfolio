@@ -427,10 +427,10 @@ h1.hero-name .line2 { color: var(--primary); display: block; }
 /* ── PROJECTS ── */
 #projects { padding: 120px 0; background: var(--bg); }
 .projects-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 24px; }
-.project-card { background: var(--bg); padding-top: 34px; border-top: 3px solid rgba(var(--primary-rgb), .22); }
+.project-card { background: var(--bg); padding-top: 34px; border-top: 3px solid color-mix(in srgb, var(--project-accent) 35%, transparent); }
 .project-card::after {
   content: ''; position: absolute; left: 36px; right: 36px; top: 0;
-  height: 3px; background: linear-gradient(90deg, var(--primary), var(--green), transparent);
+  height: 3px; background: linear-gradient(90deg, var(--project-accent), var(--green), transparent);
   transform: scaleX(.35); transform-origin: left; transition: transform .3s ease;
 }
 .project-card:hover::after { transform: scaleX(1); }
@@ -439,12 +439,24 @@ h1.hero-name .line2 { color: var(--primary); display: block; }
   gap: 16px; margin-bottom: 22px;
 }
 .project-icon {
-  width: 58px; height: 58px; display: grid; place-items: center;
+  width: 64px; height: 64px; display: grid; place-items: center;
+  gap: 2px; grid-template-rows: 1fr auto;
   border-radius: var(--r-md);
   background: var(--bg); box-shadow: var(--neu-md);
-  font-family: var(--orb); font-size: .7rem; line-height: 1;
-  letter-spacing: 1px; color: var(--primary); font-weight: 900;
-  border: 1px solid rgba(var(--primary-rgb), .12);
+  color: var(--project-accent); font-weight: 900;
+  border: 1px solid color-mix(in srgb, var(--project-accent) 22%, transparent);
+  position: relative; overflow: hidden;
+}
+.project-icon::before {
+  content: ''; position: absolute; inset: 0;
+  background: color-mix(in srgb, var(--project-accent) 10%, transparent);
+  pointer-events: none;
+}
+.project-mark { position: relative; z-index: 1; font-size: 1.35rem; line-height: 1; }
+.project-code {
+  position: relative; z-index: 1; font-family: var(--orb);
+  font-size: .54rem; letter-spacing: 1px; line-height: 1;
+  color: var(--project-accent);
 }
 .project-card:hover .project-icon { box-shadow: var(--neu-in); }
 .project-head {
@@ -454,15 +466,15 @@ h1.hero-name .line2 { color: var(--primary); display: block; }
 .project-status {
   flex: 0 0 auto;
   font-size: .58rem; letter-spacing: 1px; text-transform: uppercase;
-  color: var(--green); font-family: var(--orb); font-weight: 800;
+  color: var(--project-accent); font-family: var(--orb); font-weight: 800;
   background: var(--bg); box-shadow: var(--neu-sm);
   border-radius: var(--r-pill); padding: 5px 12px;
 }
 .project-impact {
   margin-top: 18px; padding: 12px 14px;
-  border-left: 3px solid var(--green);
+  border-left: 3px solid var(--project-accent);
   border-radius: var(--r-sm);
-  background: rgba(var(--primary-rgb), .035);
+  background: color-mix(in srgb, var(--project-accent) 6%, transparent);
   color: var(--text-dim); font-size: .86rem; line-height: 1.65;
   font-weight: 700;
 }
@@ -761,7 +773,7 @@ html.rtl .p-type::before { order: 2; }
 html.rtl .project-card::after { transform-origin: right; }
 html.rtl .project-top { flex-direction: row-reverse; }
 html.rtl .project-head { flex-direction: row-reverse; }
-html.rtl .project-impact { border-left: none; border-right: 3px solid var(--green); }
+html.rtl .project-impact { border-left: none; border-right: 3px solid var(--project-accent); }
 html.rtl .project-links { justify-content: flex-end; }
 
 /* Services RTL */
