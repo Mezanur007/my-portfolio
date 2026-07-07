@@ -10,6 +10,21 @@
         </h2>
       </div>
 
+      <div class="project-signal-grid reveal">
+        <div
+          v-for="signal in signals"
+          :key="signal.label.en"
+          class="project-signal"
+          :style="{ '--signal-accent': signal.accent }"
+        >
+          <span class="signal-icon" aria-hidden="true">{{ signal.icon }}</span>
+          <div>
+            <span class="signal-label">{{ text(signal.label) }}</span>
+            <strong>{{ text(signal.value) }}</strong>
+          </div>
+        </div>
+      </div>
+
       <div class="projects-grid">
         <article
           v-for="project in projects"
@@ -60,6 +75,33 @@ import { useLanguage } from '../composables/useLanguage'
 const { language } = useLanguage()
 
 const text = (value) => value[language.value] || value.en
+
+const signals = computed(() => [
+  {
+    icon: '🤖',
+    accent: '#6F42C1',
+    label: { en: 'AI Systems', ar: 'أنظمة الذكاء' },
+    value: { en: 'Agents + Automation', ar: 'وكلاء وأتمتة' }
+  },
+  {
+    icon: '☁️',
+    accent: '#0B5FFF',
+    label: { en: 'SaaS Builds', ar: 'منصات SaaS' },
+    value: { en: 'API + Dashboards', ar: 'API ولوحات' }
+  },
+  {
+    icon: '📱',
+    accent: '#E07A3A',
+    label: { en: 'Operations', ar: 'العمليات' },
+    value: { en: 'Mobile + Reporting', ar: 'تطبيق وتقارير' }
+  },
+  {
+    icon: '🚀',
+    accent: '#10AB7C',
+    label: { en: 'Open Source', ar: 'مصدر مفتوح' },
+    value: { en: 'Merged + Published', ar: 'مدمج ومنشور' }
+  }
+])
 
 const projects = computed(() => [
   {
