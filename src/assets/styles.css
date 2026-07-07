@@ -426,6 +426,49 @@ h1.hero-name .line2 { color: var(--primary); display: block; }
 
 /* ── PROJECTS ── */
 #projects { padding: 120px 0; background: var(--bg); }
+.project-console {
+  display: grid; grid-template-columns: 1fr auto; gap: 28px; align-items: center;
+  margin: -34px 0 28px; padding: 34px 36px;
+  background:
+    linear-gradient(135deg, rgba(var(--primary-rgb), .09), transparent 42%),
+    linear-gradient(90deg, rgba(16,171,124,.06), transparent 65%),
+    var(--bg);
+  box-shadow: var(--neu-lg); border-radius: var(--r-xl);
+  position: relative; overflow: hidden;
+}
+.project-console::before {
+  content: ''; position: absolute; inset: 0; opacity: .32; pointer-events: none;
+  background-image:
+    linear-gradient(rgba(var(--primary-rgb), .13) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(var(--primary-rgb), .13) 1px, transparent 1px);
+  background-size: 42px 42px;
+  mask-image: linear-gradient(90deg, transparent, #000 20%, #000 74%, transparent);
+}
+.console-copy, .console-stack { position: relative; z-index: 1; }
+.console-kicker {
+  display: inline-flex; margin-bottom: 14px;
+  font-family: var(--orb); font-size: .62rem; letter-spacing: 3px;
+  color: var(--primary); font-weight: 900;
+}
+.console-copy h3 {
+  font-family: var(--orb); font-size: clamp(1.12rem, 2vw, 1.55rem);
+  letter-spacing: 1px; line-height: 1.45; color: var(--text);
+  max-width: 720px; margin-bottom: 12px;
+}
+.console-copy p {
+  max-width: 720px; color: var(--text-dim);
+  line-height: 1.8; font-size: .96rem;
+}
+.console-stack {
+  display: grid; grid-template-columns: repeat(2,76px); gap: 12px;
+}
+.console-stack span {
+  min-height: 56px; display: grid; place-items: center;
+  font-family: var(--orb); font-size: .68rem; letter-spacing: 2px;
+  font-weight: 900; color: var(--primary);
+  background: var(--bg); box-shadow: var(--neu-md);
+  border-radius: var(--r-md);
+}
 .project-signal-grid {
   display: grid; grid-template-columns: repeat(4,1fr);
   gap: 16px; margin: -34px 0 34px;
@@ -817,6 +860,8 @@ html.rtl .prod-card { text-align: right; }
 html.rtl .p-glow { right: auto; left: -60px; }
 html.rtl .p-type { flex-direction: row-reverse; }
 html.rtl .p-type::before { order: 2; }
+html.rtl .project-console { grid-template-columns: auto 1fr; }
+html.rtl .console-stack { order: -1; }
 html.rtl .project-signal { flex-direction: row-reverse; }
 html.rtl .project-card::after { transform-origin: right; }
 html.rtl .project-top { flex-direction: row-reverse; }
@@ -850,6 +895,8 @@ html.dark.rtl .ms.active, html.dark.rtl .ms:hover { border-right-color: var(--pr
   .cap-grid { grid-template-columns: repeat(2,1fr); }
   .svc-grid { grid-template-columns: repeat(2,1fr); }
   .prod-grid { grid-template-columns: 1fr; }
+  .project-console { grid-template-columns: 1fr; }
+  .console-stack { grid-template-columns: repeat(4,1fr); }
   .project-signal-grid { grid-template-columns: repeat(2,1fr); }
   .projects-grid { grid-template-columns: 1fr; }
   .profile-grid { grid-template-columns: 1fr; gap: 48px; }
@@ -870,6 +917,8 @@ html.dark.rtl .ms.active, html.dark.rtl .ms:hover { border-right-color: var(--pr
   .ms-meta { flex-direction: column; gap: 4px; }
   h1.hero-name { letter-spacing: -2px; }
   .svc-grid { grid-template-columns: repeat(2,1fr); }
+  .project-console { padding: 28px 22px; }
+  .console-stack { grid-template-columns: repeat(2,1fr); }
   .project-signal-grid { grid-template-columns: 1fr; margin-top: -24px; }
   .project-head { flex-direction: column; align-items: flex-start; }
   html.rtl .project-head { align-items: flex-end; }

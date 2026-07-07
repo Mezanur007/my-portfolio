@@ -10,6 +10,25 @@
         </h2>
       </div>
 
+      <div class="project-console reveal">
+        <div class="console-copy">
+          <span class="console-kicker">{{ language === 'en' ? 'SYSTEMS PORTFOLIO' : 'معرض الأنظمة' }}</span>
+          <h3>{{ language === 'en' ? 'Business software with AI, SaaS, ops, and web delivery.' : 'برمجيات أعمال تجمع الذكاء الاصطناعي وSaaS والعمليات والويب.' }}</h3>
+          <p>
+            {{ language === 'en'
+              ? 'A focused view of public contributions and private/client-safe product work, arranged by engineering value rather than repository count.'
+              : 'عرض مركز للمساهمات العامة وأعمال المنتجات الخاصة أو العملاء بشكل آمن، مرتبة حسب القيمة الهندسية وليس عدد المستودعات.'
+            }}
+          </p>
+        </div>
+        <div class="console-stack" aria-hidden="true">
+          <span>AI</span>
+          <span>SaaS</span>
+          <span>OPS</span>
+          <span>WEB</span>
+        </div>
+      </div>
+
       <div class="project-signal-grid reveal">
         <div
           v-for="signal in signals"
